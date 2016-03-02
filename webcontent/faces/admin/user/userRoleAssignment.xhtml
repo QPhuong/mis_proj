@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="userRoleAssignmentForm">
+		<h:panelGroup rendered="#{userBean.shownDetail}" id="userRoleAssignmentPanel" style="border: none">
+			<p:pickList id="rolePickList" value="#{userRoleAssignmentBean.userRoleList}" var="role" effect="bounce" styleClass="rolePickList"
+                itemValue="#{role}" itemLabel="#{role.name}" showSourceControls="true" showTargetControls="true" showCheckbox="true"
+                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="#{roleConverter}">
+            	
+            	<f:facet name="sourceCaption">Available Role</f:facet>
+        		<f:facet name="targetCaption">Assigned Role</f:facet>
+	            
+		        <p:column style="width:85%;">
+		            <h:outputText value="#{role.name}"/>
+		        </p:column>
+            </p:pickList>
+            
+            <p:commandButton actionListener="#{userRoleAssignmentBean.doSaveUserRoleAssignment}" ajax="true" 
+            	value="Save" update=":userLstForm @form" style="margin-left:200px; margin-right:5px"/>
+    		<p:commandButton value="Reset" actionListener="#{userRoleAssignmentBean.doReset}" ajax="true" update="@form"/>
+	        			
+		</h:panelGroup>
+	</h:form>
+
+
+</html>

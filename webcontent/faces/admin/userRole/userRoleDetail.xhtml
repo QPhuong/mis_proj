@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="userRoleDetailForm">
+		<h:panelGroup rendered="#{userRoleBean.shownDetail}">
+			<p:messages id="messages" autoUpdate="false" />
+			<p:panelGrid cellpadding="5" id="userProfilePanel" styleClass="userRoleDetailPanel">
+				<p:row>
+					<p:column style="width:200px"><p:outputLabel for="code" value="Role code: " /></p:column>
+					<p:column><p:inputText id="code" size="80" value="#{userRoleBean.selectedUserRole.code}" required="true"/></p:column>
+				</p:row>
+				<p:row>
+					<p:column style="width:200px"><p:outputLabel for="name" value="Role name: " /></p:column>
+					<p:column><p:inputText id="name" size="80" value="#{userRoleBean.selectedUserRole.name}" required="true"/></p:column>
+				</p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="description" value="Description: " /></p:column>
+	            	<p:column>
+	            		<p:inputTextarea id="description" rows="5" cols="77" autoResize="false" value="#{userRoleBean.selectedUserRole.description}"/>
+	            	</p:column>
+	            </p:row>
+	            <p:row rendered="#{userRoleBean.selectedOrganization.ownerOrganization}">
+	            	<p:column><p:outputLabel for="sysAdmin" value="System Administrator Role: " /></p:column>
+	            	<p:column>
+	            		<p:selectBooleanCheckbox value="#{userRoleBean.selectedUserRole.systemAdminRole}" id="sysAdmin" 
+	            			disabled="#{(not userRoleBean.selectedOrganization.ownerOrganization) and (not authenticationBean.logindUser.sysAdministrator)}"/>
+	            	</p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="orgAdmin" value="Organization Administrator Role: " /></p:column>
+	            	<p:column>
+	            		<p:selectBooleanCheckbox value="#{userRoleBean.selectedUserRole.organizationAdminRole}" id="orgAdmin" 
+	            			disabled="#{not (authenticationBean.logindUser.sysAdministrator or authenticationBean.logindUser.organizationAdministrator)}"/>
+	            	</p:column>
+	            </p:row>	            
+	            <p:row>
+	            	<p:column></p:column>
+	            	<p:column>
+	            		<p:commandButton actionListener="#{userRoleBean.doUserRoleDetailSave}" value="Save" update=":userRoleLstForm @form"
+	            			oncomplete="PF('userRoleWidgetVar').clearFilters();"/>
+	        			<p:commandButton value="Cancel" action="#{userRoleBean.doUserRoleDetailCancel}" immediate="true" update=":userRoleLstForm @form"/>
+	            	</p:column>
+	            </p:row>
+	        </p:panelGrid>
+		</h:panelGroup>
+	</h:form>
+
+
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+	<h:form id="userLstForm" style="width: 100%;margin-left: auto;margin-right: auto;">
+		<p:remoteCommand name="changeSelectedOrganization" actionListener="#{userBean.doLoadUserLst}" 
+					update="@([id$=userLstForm]), @([id$=userProfileForm])" />
+		
+		<p:panel styleClass="panelControlHeader">
+			<p:panelGrid columns="3" styleClass="noBorderPanelGrid">
+				<p:outputLabel value="Organization: " rendered="#{userBean.multiOrganization}"/>
+				<p:selectOneMenu value="#{userBean.selectedOrganization}" effect="fade" id="org" converter="#{organizationConverter}" var="org"
+						onchange="changeSelectedOrganization()" rendered="#{userBean.multiOrganization}">
+					<f:selectItems value="#{userBean.organizationLst}" var="item" itemLabel="#{item.name}" itemValue="#{item}"/>
+					<p:column>
+		                <h:outputText value="#{org.name}" />
+		            </p:column>
+				</p:selectOneMenu>			
+				<p:commandButton value="Add User" actionListener="#{userBean.doAddNewUser}" disabled="#{not userBean.shownAddUser}"
+					ajax="true" update=":userInfoTab" icon="ui-icon-plusthick"/>
+			</p:panelGrid>
+		</p:panel>
+		
+		<h:panelGroup id="userLstGroup" layout="block" styleClass="masterDataLstPanel">
+			<p:dataTable id="dataTable" var="user" value="#{userBean.userLst}" 
+				selection="#{userBean.selectedUser}" selectionMode="single" rowKey="#{user.id}"
+				widgetVar="userWidgetVar" styleClass="userTable" scrollable="true"
+				filteredValue="#{userBean.userFilterLst}">  
+				
+				<f:facet name="header">
+		            <p:outputPanel>
+		                <h:outputText value="Filter all fields: " />
+		                <p:inputText id="globalFilter" onkeyup="PF('userWidgetVar').filter()" style="width:150px" 
+		                	placeholder="Enter keyword" value="#{userBean.filterText}"/>
+		            </p:outputPanel>
+	        	</f:facet>
+	        	
+		        <p:column headerText="User Name"  
+		        		filterStyle="display:none; visibility:hidden;" filterBy="#{user.username}" filterMatchMode="contains">  
+		            <h:outputText value="#{user.username}" />  
+		        </p:column>  
+		  		<p:column headerText="Full Name"  
+		        		filterStyle="display:none; visibility:hidden;" filterBy="#{user.fullname}" filterMatchMode="contains">  
+		            <h:outputText value="#{user.fullname}" />  
+		        </p:column> 
+		        <p:column headerText="Email"  
+		        		filterStyle="display:none; visibility:hidden;" filterBy="#{user.email}" filterMatchMode="contains">  
+		            <h:outputText value="#{user.email}" />  
+		        </p:column> 
+		        <p:column headerText="Organization Administrator" style="width:72px; text-align: center; vertical-align: middle;">  
+		            <p:selectBooleanCheckbox value="#{user.organizationAdministrator}" disabled="true"/> 
+		        </p:column> 
+		        <p:column headerText="System Administrator" rendered="#{userBean.selectedOrganization.ownerOrganization}" 
+		        		style="width:72px; text-align: center; vertical-align: middle;" >
+		        	<p:selectBooleanCheckbox value="#{user.sysAdministrator}" disabled="true"/> 
+		        </p:column>
+		        <p:column headerText="Active" style="width:30px; text-align: center; vertical-align: middle;">  
+		            <p:selectBooleanCheckbox value="#{user.active}" disabled="true"/> 
+		        </p:column>
+		        <p:column headerText="Locked" style="width:40px; text-align: center; vertical-align: middle;">  
+		            <p:selectBooleanCheckbox value="#{user.locked}" disabled="true"/> 
+		        </p:column>
+				<p:column headerText="Edit" style="width:25px;text-align: center; vertical-align: middle;" >  
+		             <p:commandButton ajax="true" icon="ui-icon-pencil" update="dataTable, :userInfoTab" actionListener="#{userBean.doUserDetailEdit}">
+		             	<f:setPropertyActionListener target="#{userBean.selectedUser}" value="#{user}" />
+		             	<p:ajax update="@([id$=userProfileForm])" resetValues="true" />
+		             </p:commandButton>
+		        </p:column>  
+				<p:column headerText="Delete" style="width:40px;text-align: center; vertical-align: middle;">  
+		            <p:commandButton id="showDialogButton" oncomplete="PF('confirmation').show()" ajax="true" 
+		            	update=":confirmDialog" icon="ui-icon-trash" disabled="#{user.sysAdministrator or user.locked}">  
+		             	<f:setPropertyActionListener target="#{userBean.selectedUser}" value="#{user}" />
+		            </p:commandButton>
+		        </p:column>
+		    </p:dataTable>
+		</h:panelGroup>
+	</h:form>
+	
+	<p:confirmDialog id="confirmDialog" message="Are you sure to delete this user (#{userBean.selectedUser.username})?"  
+               header="Delete User" severity="alert" widgetVar="confirmation" appendTo="@(body)">  
+       <h:form id="userDeleteConfirmDialog" style="float:right">          
+       <p:commandButton id="confirm" value="Yes" update=":userLstForm" oncomplete="PF('confirmation').hide()"  
+                   actionListener="#{userBean.doUserDelete}" />  
+       <p:commandButton id="decline" value="No" onclick="PF('confirmation').hide()" type="button" />   
+        </h:form>         
+	</p:confirmDialog>
+
+</html>

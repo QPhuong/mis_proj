@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+<h:form>
+ 	<p:remoteCommand name="logout" actionListener="#{authenticationBean.logout}"/>
+ 	
+	<!-- If idle 30 minus (18000000), run 'idleDialog' -->
+	<!-- <p:idleMonitor timeout="180" onidle="PF('idleDialog').show()"/> -->
+ 	
+	<p:dialog id="idleDialog" header="Timeout" severity="alert" widgetVar="idleDialog" modal="true" width="400px" 
+		appendTo="@(body)" onShow="logout()" closable="false">
+ 		<h:outputText value="Your session has timed out." style="font-size: 18px;padding-bottom:20px;color: rgb(0,84,146)"/>
+		<br/><br/>
+		<h:outputText value="Your browser session has timed out, and you have been logged off.
+		You are automatically logged off if there is no interation with the application for a period of time that is specified by your system administrator."
+			style="font-size:13px;padding-bottom:15px;color: rgb(0,84,146)"/>
+		<br/><br/>
+		<p:outputLabel value="To log on again, click " style="font-size:13px;color: rgb(0,84,146)"/>
+		<h:outputLink value="#{request.contextPath}/faces/login.xhtml" style="font-size:13px;color: rgb(0,104,126)">here</h:outputLink>
+		<br/><br/>
+	</p:dialog>
+ 
+</h:form>
+  
+</html>

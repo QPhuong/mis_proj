@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:document="http://java.sun.com/jsf/composite/document">
+
+<h:form>	
+	<p:menubar model="#{menuBean.mainMenu}">
+		
+		<!-- <p:menuitem value="Document" icon="ui-icon-home" actionListener="#{menuBean.onClickMainMenu(1)}"/>
+	
+	     <p:submenu label="Administrator" icon="ui-icon-pencil">
+	          <p:menuitem value="Manage Organization" url="/faces/organizationManagement.xhtml" />
+	          <p:menuitem value="Manage Organization Structure" outcome="/faces/organizationUnitStruture" />          
+	          <p:menuitem value="Manage User Role" outcome="/faces/userRoleManagement" />
+	          <p:menuitem value="Manage User" outcome="/faces/userManagement"/>
+	          <p:menuitem value="Manage Main Categories" outcome="/faces/categoryManagement" />
+	          <p:menuitem value="Manage Menu Security" outcome="/faces/menuSecurityManagement" />
+	      </p:submenu>
+	
+	      <p:submenu label="Help" icon="ui-icon-help">
+	          <p:menuitem value="Search" />            
+	      </p:submenu> -->
+	
+	      <f:facet name="options">
+	      	  <h:outputText value="Login as: "></h:outputText>       
+	      	  <p:commandLink value="#{authenticationBean.logindUser.fullname}" style="margin-right:10px;font-weight: bold;color:#2e6e9e;" 
+	      	  		update="@([id$=userProfileDialog])" oncomplete="PF('userProfileDialogVar').show()" id="loginUserName" resetValues="true">
+	      	  		<!-- <p:ajax update="@([id$=userProfileForm])" resetValues="true" /> -->
+	      	  </p:commandLink>
+	      	  
+	          <!-- <h:outputLink value="#{request.contextPath}/j_spring_security_logout" style="margin-right:30px;">Logout</h:outputLink> -->
+	          <p:commandLink value="Logout" onclick="PF('confirmLogoutWidgetVar').show();" style="margin-right:30px;" />
+	      </f:facet>
+	</p:menubar>
+	
+</h:form>
+
+<p:dialog id="userProfileDialog" widgetVar="userProfileDialogVar" modal="true" appendTo="@(body)" closable="false"
+		height="250px" width="500px" header="User Profile" showEffect="clip" hideEffect="clip">
+	<document:userProfile userValue="#{authenticationBean.logindUser}" updateComponent="@([id$=loginUserName])"/>
+</p:dialog>
+
+<p:confirmDialog id="confirmLogoutDialog" message="Are you sure you want to logout? Any unsaved data will be lost."  
+	              header="Logout Confirmation" severity="alert" widgetVar="confirmLogoutWidgetVar" appendTo="@(body)">  
+  <h:form style="float:right">          
+      <p:commandButton id="confirm" value="Yes" oncomplete="PF('confirmLogoutWidgetVar').hide();"  
+                  actionListener="#{authenticationBean.logoutAndRedirect}" />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmLogoutWidgetVar').hide()" type="button" style="margin-left: 5px;"/>   
+  </h:form>         
+</p:confirmDialog>
+	
+</html>

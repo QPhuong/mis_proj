@@ -1,0 +1,551 @@
+.ui-menu .ui-menu-parent .ui-menu-child {
+	width: 200px !important;
+}
+
+.ui-menu {
+	width: auto !important;
+}
+
+.ui-datatable thead th.wrap {
+    white-space: normal;
+    padding-left: 4px !important;
+   	padding-right: 4px !important;
+}
+
+.noBorderPanelGrid>tbody>tr, .noBorderPanelGrid>tbody>tr>td{
+	border: none !important;
+} 
+
+.noBorderTreeNode {
+	border: none !important;	
+}
+
+.noBorderPanel {
+	border: none !important;	
+}
+
+.noBorderDataList, .noBorderDataList .ui-datalist-content {
+	border: none;
+}
+
+ .loginPanel{	
+	width:500px !important;
+	height:100%;
+	vertical-align: center;
+	margin-left: auto;
+ 	margin-right: auto;
+ 	position: relative;
+	margin-top: 10%;
+}
+.loginGridPanel>tbody>tr, .loginGridPanel>tbody>tr>td{
+	border: none !important;
+}
+
+.loginGridPanel {	
+	width:100%;
+	vertical-align: center;
+	margin-left: auto;
+ 	margin-right: auto;
+}
+
+.userProfilePanel>tbody>tr, .userProfilePanel>tbody>tr>td{
+	border: none !important;
+}
+
+.userProfilePanel {	
+	width:80%;
+	vertical-align: center;
+	margin-left: auto;
+ 	margin-right: auto;
+}
+
+.orgDetailPanel>tbody>tr, .orgDetailPanel>tbody>tr>td{
+	border: none !important;
+}
+
+.orgDetailPanel {	
+	width:80%;	
+	vertical-align: center;
+	margin-left: auto;
+ 	margin-right: auto;
+}
+
+.categoryDetailPanel>tbody>tr, .categoryDetailPanel>tbody>tr>td{
+	border: none !important;
+}
+
+.categoryDetailPanel {	
+	width:80%;	
+	vertical-align: center;
+	margin-left: auto;
+ 	margin-right: auto;
+}
+
+.categoryTree {
+	border: none !important;
+}
+.categoryTree .ui-tree-container {
+	width:100%;
+}
+
+.ui-tree .ui-treenode {
+	margin-right:5px;
+}
+
+.ui-tree .ui-treenode .ui-treenode-label {
+	width:90%;
+}
+
+.newCategoryDialogPanel>tbody>tr, .newCategoryDialogPanel>tbody>tr>td{
+	border: none !important;
+}
+
+.userRoleDetailPanel>tbody>tr, .userRoleDetailPanel>tbody>tr>td{
+	border: none !important;
+}
+
+.userRoleDetailPanel {	
+	width:80%;	
+	vertical-align: center;
+	margin-left: auto;
+ 	margin-right: auto;
+}
+
+.userInfoTabView .ui-tabs-nav{
+	width: 20%;
+}
+
+.userInfoTabView .ui-tabs-panels{
+	width: 80%
+}
+
+.orgUnitHierachy {
+	border: none !important;	
+}
+
+.ui-tabs {
+	border: none !important;
+	/* width: 100%;
+	height: 100%; */
+	margin: -3px;
+	padding: 0;
+}
+
+.ui-tabs .ui-tabs-panel {
+	padding: 0 !important;
+}
+
+.ui-tabs .ui-tabs-panels .ui-widget-content {
+}
+
+.userPickListPanel .userPickList, .userPickListPanel .ui-button{
+	margin-left:auto; 
+	margin-right:auto;
+	vertical-align: center;
+	position:relative;
+}
+
+.userPickListPanel .ui-picklist .ui-picklist-filter {
+	width: 300px;
+}
+.userPickListPanel .ui-picklist .ui-picklist-list {
+	width: 320px;
+	height: 380px;
+}
+
+.ui-contextmenu {
+	width:250px !important;
+} 
+
+.securityEntityPanel>tbody>tr, .securityEntityPanel>tbody>tr>td{
+	border: none !important;
+	
+}
+
+.securityEntityPanel .ui-panelgrid-cell {
+	padding: 2px 8px !important;
+}
+
+.panelControlHeader {
+	margin:5px;
+	box-shadow: 1px 1px 1px #70A8D2;
+}
+.panelControlHeader .ui-panel-content {
+	padding:1px !important;
+}
+
+.panelControlHeader .ui-panel-content .ui-panelgrid .ui-panelgrid-cell {
+    padding: 2px 4px;
+}
+
+.ui-wizard-step-title {
+	font-size: 15px !important;
+}
+
+.documentTable .ui-datatable-header {
+	text-align: right;
+}
+
+.trashTable .ui-datatable-header {
+	text-align: right;
+}
+
+.organizationTable .ui-datatable-header {
+	text-align: right;
+}
+
+.userTable .ui-datatable-header {
+	text-align: right;
+}
+
+.userRoleTable .ui-datatable-header {
+	text-align: right;
+}
+
+.mainCategoryTable .ui-datatable-header {
+	text-align: right;
+}
+
+/* -------- Evaluation page START-------------*/
+.checklistControl_1 {
+	background-color: rgb(253, 210, 83) !important;
+	background-image: none !important;
+  	font-weight: bold;
+}
+
+.checklistControl_2 {
+	background-color: rgb(196, 219, 236) !important;
+	background-image: none !important;
+	font-weight: bold;
+}
+
+.checklistControl_3 {
+}
+
+.statusInputNumber .pe-inputNumber {
+	width:80px;
+}
+
+.evaluationTable {
+	height:100%;
+}
+
+.evaluationTable .ui-treetable-scrollable-body {
+	/* Firefox */
+	height: -moz-calc(100% - 105px);
+	/* WebKit */
+	height: -webkit-calc(100% - 105px);
+	/* Opera */
+	height: -o-calc(100% - 105px);
+	/* Standard */
+	height: calc(100% - 105px) !important;
+    overflow: auto !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    width: calc(100% - 12px) !important;
+}
+/* -------- Evaluation page END-------------*/
+
+/* -------- Scrolling div START-------------*/
+
+/* ------ isoDocumentList.xml START--------*/
+.docListLayout  .documentTable .ui-datatable-scrollable-body {
+	/* Firefox */
+	height: -moz-calc(100% - 100px);
+	/* WebKit */
+	height: -webkit-calc(100% - 100px);
+	/* Opera */
+	height: -o-calc(100% - 100px);
+	/* Standard */
+	height: calc(100% - 100px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    /* Firefox */
+	width: -moz-calc(100% - 12px) !important;
+	/* WebKit */
+	width: -webkit-calc(100% - 12px) !important;
+	/* Opera */
+	width: -o-calc(100% - 12px) !important;
+	/* Standard */
+    width: calc(100% - 12px) !important;
+}
+
+.resultLayout  .documentTable .ui-datatable-scrollable-body {
+	/* Firefox */
+	height: -moz-calc(100% - 70px);
+	/* WebKit */
+	height: -webkit-calc(100% - 70px);
+	/* Opera */
+	height: -o-calc(100% - 70px);
+	/* Standard */
+	height: calc(100% - 70px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    /* Firefox */
+	width: -moz-calc(100% - 12px) !important;
+	/* WebKit */
+	width: -webkit-calc(100% - 12px) !important;
+	/* Opera */
+	width: -o-calc(100% - 12px) !important;
+	/* Standard */
+    width: calc(100% - 12px) !important;
+}
+
+/* ------ isoDocumentList.xml END--------*/
+
+/* ------ isoTrashList.xml START--------*/
+.resultLayout .trashTable .ui-datatable-scrollable-body {
+	/* Firefox */
+	height: -moz-calc(100% - 70px);
+	/* WebKit */
+	height: -webkit-calc(100% - 70px);
+	/* Opera */
+	height: -o-calc(100% - 70px);
+	/* Standard */
+	height: calc(100% - 70px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    /* Firefox */
+	width: -moz-calc(100% - 12px) !important;
+	/* WebKit */
+	width: -webkit-calc(100% - 12px) !important;
+	/* Opera */
+	width: -o-calc(100% - 12px) !important;
+	/* Standard */
+    width: calc(100% - 12px) !important;
+}
+/* ------ isoTrashList.xml END--------*/
+
+/* --------- Category & Document Detail - START --------*/
+.detailPropertiesPanel {
+	/* Firefox */
+	height: -moz-calc(100% - 70px);
+	/* WebKit */
+	height: -webkit-calc(100% - 70px);
+	/* Opera */
+	height: -o-calc(100% - 70px);
+	/* Standard */
+	height: calc(100% - 70px) !important;
+	
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    
+    /* Firefox */
+	width: -moz-calc(100% - 10px);
+	/* WebKit */
+	width: -webkit-calc(100% - 10px);
+	/* Opera */
+	width: -o-calc(100% - 10px);
+	/* Standard */
+	width: calc(100% - 10px) !important;
+}
+
+.extPropertiesPanel {
+	/* Firefox */
+	height: -moz-calc(100% - 70px);
+	/* WebKit */
+	height: -webkit-calc(100% - 70px);
+	/* Opera */
+	height: -o-calc(100% - 70px);
+	/* Standard */
+	height: calc(100% - 70px) !important;
+	
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    
+    /* Firefox */
+	width: -moz-calc(100% - 10px);
+	/* WebKit */
+	width: -webkit-calc(100% - 10px);
+	/* Opera */
+	width: -o-calc(100% - 10px);
+	/* Standard */
+	width: calc(100% - 10px) !important;
+}
+
+.securityTable .ui-datatable-scrollable-body {
+	/* Firefox */
+	height: -moz-calc(100% - 175px);
+	/* WebKit */
+	height: -webkit-calc(100% - 175px);
+	/* Opera */
+	height: -o-calc(100% - 175px);
+	/* Standard */
+	height: calc(100% - 175px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    /* Firefox */
+	width: -moz-calc(100% - 12px) !important;
+	/* WebKit */
+	width: -webkit-calc(100% - 12px) !important;
+	/* Opera */
+	width: -o-calc(100% - 12px) !important;
+	/* Standard */
+    width: calc(100% - 12px) !important;
+}
+
+.historyTable .ui-datatable-scrollable-body {
+	/* Firefox */
+	height: -moz-calc(100% - 70px);
+	/* WebKit */
+	height: -webkit-calc(100% - 70px);
+	/* Opera */
+	height: -o-calc(100% - 70px);
+	/* Standard */
+	height: calc(100% - 70px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    /* Firefox */
+	width: -moz-calc(100% - 12px) !important;
+	/* WebKit */
+	width: -webkit-calc(100% - 12px) !important;
+	/* Opera */
+	width: -o-calc(100% - 12px) !important;
+	/* Standard */
+    width: calc(100% - 12px) !important;
+}
+
+.versionTable .ui-datatable-scrollable-body {
+	/* Firefox */
+	height: -moz-calc(100% - 70px);
+	/* WebKit */
+	height: -webkit-calc(100% - 70px);
+	/* Opera */
+	height: -o-calc(100% - 70px);
+	/* Standard */
+	height: calc(100% - 70px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    /* Firefox */
+	width: -moz-calc(100% - 12px) !important;
+	/* WebKit */
+	width: -webkit-calc(100% - 12px) !important;
+	/* Opera */
+	width: -o-calc(100% - 12px) !important;
+	/* Standard */
+    width: calc(100% - 12px) !important;
+}
+
+.docNotesPanel {
+	/* Firefox */
+	height: -moz-calc(100% - 70px);
+	/* WebKit */
+	height: -webkit-calc(100% - 70px);
+	/* Opera */
+	height: -o-calc(100% - 70px);
+	/* Standard */
+	height: calc(100% - 70px) !important;
+	
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    
+    /* Firefox */
+	width: -moz-calc(100% - 10px);
+	/* WebKit */
+	width: -webkit-calc(100% - 10px);
+	/* Opera */
+	width: -o-calc(100% - 10px);
+	/* Standard */
+	width: calc(100% - 10px) !important;
+}
+/* --------- Category & Document Detail - END --------*/
+
+/* ---------- Master Data START-----------------*/
+.masterDataLstPanel .ui-datatable-scrollable-body{
+	/* Firefox */
+	height: -moz-calc(100% - 130px);
+	/* WebKit */
+	height: -webkit-calc(100% - 130px);
+	/* Opera */
+	height: -o-calc(100% - 130px);
+	/* Standard */
+	height: calc(100% - 130px) !important;
+	
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    
+    /* Firefox */
+	width: -moz-calc(100% - 12px);
+	/* WebKit */
+	width: -webkit-calc(100% - 12px);
+	/* Opera */
+	width: -o-calc(100% - 12px);
+	/* Standard */
+	width: calc(100% - 12px) !important;
+}
+
+.mainCategoryLstPanel .ui-datatable-scrollable-header {
+	padding-right: 17px !important;
+}
+.mainCategoryLstPanel .ui-datatable-scrollable-body{
+	/* Firefox */
+	height: -moz-calc(100% - 110px);
+	/* WebKit */
+	height: -webkit-calc(100% - 110px);
+	/* Opera */
+	height: -o-calc(100% - 110px);
+	/* Standard */
+	height: calc(100% - 110px) !important;
+	
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    
+    /* Firefox */
+	width: -moz-calc(100% - 12px);
+	/* WebKit */
+	width: -webkit-calc(100% - 12px);
+	/* Opera */
+	width: -o-calc(100% - 12px);
+	/* Standard */
+	width: calc(100% - 12px) !important;
+}
+
+.mainCategoryDetailPanel{
+	/* Firefox */
+	height: -moz-calc(100% - 55px);
+	/* WebKit */
+	height: -webkit-calc(100% - 55px);
+	/* Opera */
+	height: -o-calc(100% - 55px);
+	/* Standard */
+	height: calc(100% - 55px) !important;
+	
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 0px !important;
+    position: absolute !important;
+    
+    /* Firefox */
+	width: -moz-calc(100% - 12px);
+	/* WebKit */
+	width: -webkit-calc(100% - 12px);
+	/* Opera */
+	width: -o-calc(100% - 12px);
+	/* Standard */
+	width: calc(100% - 12px) !important;
+}
+/* ---------- Master Data START-----------------*/
+			
+/* -------- Scrolling div END-------------*/

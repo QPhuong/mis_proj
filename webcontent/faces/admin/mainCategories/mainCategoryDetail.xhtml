@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:panelGroup id="mainCategoryDetailPanel" layout="block" rendered="#{mainCategoryBean.renderMainCategoryDetailTab}">
+	
+	<h:form id="buttonControlFrom">
+		<p:remoteCommand name="reloadTempFileList" update="@([id$=tempFileLstPanel])"></p:remoteCommand>
+		<p:messages id="messages" autoUpdate="false" severity="error, warning"/>
+		
+		<p:panel styleClass="panelControlHeader" rendered="#{mainCategoryBean.selected}">
+			<p:commandButton value="Add sub category" style="margin-right: 5px;" icon="ui-icon-plus" process="@form"
+				actionListener="#{mainCategoryBean.doAddCategory}" update="@form @([id$=mainCategoryDetailForm])" rendered="${not empty mainCategoryBean.selectedMainCategory.id}"/>
+			<p:commandButton value="Save" style="margin-right: 5px;" icon="ui-icon-disk" process="@form" id="btnSave"
+				actionListener="#{mainCategoryBean.doSaveCategory}" update="@([id$=mainCategoryTreeForm]) @form @([id$=mainCategoryDetailForm])"/>
+			<p:commandButton value="Reset" icon="ui-icon-refresh" process="@this" update="@([id$=mainCategoryTreeForm]) @form @([id$=mainCategoryDetailForm])" 
+				actionListener="#{mainCategoryBean.doResetCategory}" style="margin-right: 5px;">
+				<p:resetInput target="mainCategoryDetailForm" />
+			</p:commandButton>
+			<p:commandButton value="Delete" style="margin-right: 5px;" icon="ui-icon-trash" process="@form" id="btnDelete"
+				rendered="${not empty mainCategoryBean.selectedMainCategory.id}"
+				oncomplete="PF('confirmDeleteMainCategoryVar').show()" update="@([id$=confirmDeleteMainCategoryDlg])"/>
+		</p:panel>
+	</h:form>
+	
+	<h:panelGroup layout="block" styleClass="mainCategoryDetailPanel" style="margin-top:2px;">
+		
+		<h:form id="mainCategoryDetailForm">
+			<h:panelGroup rendered="#{mainCategoryBean.selected}">
+				<p:panelGrid id="mainCategoryDetailPanel" styleClass="noBorderPanelGrid">
+					<p:row>
+						<p:column style="width:100px; min-width: 100px;"><p:outputLabel for="code" value="Category code" /></p:column>
+						<p:column><p:inputText id="code" size="70" value="#{mainCategoryBean.selectedMainCategory.code}" required="true"/></p:column>
+					</p:row>
+					<p:row>
+						<p:column style="width:100px; min-width: 100px;"><p:outputLabel for="name" value="Category name" /></p:column>
+						<p:column><p:inputText id="name" size="70" value="#{mainCategoryBean.selectedMainCategory.name}" required="true"/></p:column>
+					</p:row>
+		            <p:row>
+		            	<p:column><p:outputLabel for="editor" value="Description" /></p:column>
+		            	<p:column>
+		            		<p:editor id="editor" widgetVar="editorVar" value="#{mainCategoryBean.selectedMainCategory.description}" width="550"
+		            			controls="bold italic underline strikethrough subscript superscript | font size style | color highlight removeformat | bullets numbering | outdent indent | alignleft center alignright justify | undo redo | rule link unlink | cut copy paste pastetext | source">
+		            		</p:editor>
+		            	</p:column>
+		            </p:row>
+		            <p:row>
+		            	<p:column><p:outputLabel value="Templates " /></p:column>
+		            	<p:column>
+		            		<h:panelGroup layout="block" style="margin-bottom:-10px;" id="templateLstPanel">
+			            		<p:dataList value="#{mainCategoryBean.selectedMainCategory.lstTemplates}" var="template"
+			        					type="unordered" itemType="none" emptyMessage="" styleClass="noBorderDataList" >
+			        					
+									<p:panelGrid columns="2" styleClass="noBorderPanelGrid" style="margin-left: -50px">
+										<p:commandLink value="#{template.fileName}" style="color:#2e6e9e;" onclick="$('[id*=downloadTemplateBtn]').click()">
+											<f:setPropertyActionListener value="#{template}" target="#{mainCategoryBean.isoDocument}" />
+										</p:commandLink>
+										
+										<p:commandLink title="Delete" styleClass="ui-icon ui-icon-trash" action="#{mainCategoryBean.doDeleteTemplateFile}"
+											update="@([id$=templateLstPanel])">
+								    		<f:setPropertyActionListener value="#{template}" target="#{mainCategoryBean.isoDocument}" />
+										</p:commandLink>
+									</p:panelGrid>
+								</p:dataList>
+							</h:panelGroup>
+							
+		            		<h:panelGroup layout="block" style="margin-top:-10px; margin-bottom:-10px;" id="tempFileLstPanel" >
+			            		<p:dataList value="#{mainCategoryBean.lstTemporaryFile}" var="tempFile"
+			        					type="unordered" itemType="none" emptyMessage="" styleClass="noBorderDataList" >
+			        					
+									<p:panelGrid columns="2" styleClass="noBorderPanelGrid" style="margin-left: -50px">
+										<p:commandLink value="#{tempFile.fileName} (temp)" style="color:#e17009" onclick="$('[id*=downloadTempTemplateBtn]').click()">
+											<f:setPropertyActionListener value="#{tempFile}" target="#{mainCategoryBean.temporaryFile}" />
+										</p:commandLink>
+										
+										<p:commandLink title="Delete" styleClass="ui-icon ui-icon-trash" action="#{mainCategoryBean.doDeleteTemporaryFile}"
+											update="@([id$=tempFileLstPanel])">
+								    		<f:setPropertyActionListener value="#{tempFile}" target="#{mainCategoryBean.temporaryFile}" />
+										</p:commandLink>
+									</p:panelGrid>
+								</p:dataList>
+							</h:panelGroup>
+		            	</p:column>
+		            </p:row>
+		        </p:panelGrid>
+		        
+			</h:panelGroup>
+		</h:form>	
+			
+		<h:form>
+			<p:commandButton id="downloadTemplateBtn" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+		        		actionListener="#{mainCategoryBean.doDownloadTemplate}" style="display:none;">
+		        	<p:fileDownload value="#{mainCategoryBean.downloadFile}" />
+		    </p:commandButton>
+		    <p:commandButton id="downloadTempTemplateBtn" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+		        		actionListener="#{mainCategoryBean.doDownloadTempTemplate}" style="display:none;">
+		        	<p:fileDownload value="#{mainCategoryBean.downloadFile}" />
+		    </p:commandButton>
+		</h:form>
+	
+		<h:form style="margin-left:128px;" id="mainCategoryDetailTemplateForm" rendered="#{(mainCategoryBean.selected)}">
+			<style>
+				.templateMainCategory .ui-fileupload-buttonbar {
+				    background: transparent none;
+				    border: none;
+				}
+				.templateMainCategory .ui-fileupload-content {
+				    border: none;		    
+				}
+				.templateMainCategory .ui-fileupload-buttonbar .ui-fileupload-cancel {
+					display: none;
+				}
+				.templateMainCategory .ui-fileupload-buttonbar .ui-fileupload-upload {
+					display: none;
+				}
+				.templateMainCategory .ui-fileupload-files tr td:nth-child(1)		
+				{
+					display: none;
+				}
+				.templateMainCategory .ui-fileupload-files tr td:nth-child(2)		
+				{
+					width: 200px;
+				}
+				.templateMainCategory .ui-fileupload-files td {
+					padding: 4px;
+				}
+				.templateMainCategory .ui-fileupload-content .ui-progressbar {
+					width: 170px;
+				}
+				</style>
+			
+			<p:fileUpload styleClass="templateMainCategory" mode="advanced" id="checkInUpload" oncomplete="reloadTempFileList()" 
+				fileUploadListener="#{mainCategoryBean.doUpload}" auto="true"/>
+		</h:form>
+		
+    </h:panelGroup>
+            		
+</h:panelGroup>
+
+<p:confirmDialog id="confirmDeleteMainCategoryDlg" message="Are you sure to delete this category (#{mainCategoryBean.selectedMainCategory.name})?"  
+              header="Delete Category" severity="alert" widgetVar="confirmDeleteMainCategoryVar" appendTo="@(body)"
+              showEffect="drop" hideEffect="drop" >  
+      <h:form style="float:right">          
+      <p:commandButton id="confirm" value="Yes" actionListener="#{mainCategoryBean.doDeleteCategory}" 
+      			update="@([id$=mainCategoryTreeForm]) @([id$=mainCategoryDetailPanel]) @([id$=mainCategoryOrgForm]) @([id$=buttonControlFrom])" 
+      			oncomplete="PF('confirmDeleteMainCategoryVar').hide()"  />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmDeleteMainCategoryVar').hide()" type="button" />   
+       </h:form>         
+</p:confirmDialog>
+
+</html>

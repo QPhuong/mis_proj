@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+      
+<h:form id="docSearchTrashForm">
+
+	<p:panelGrid styleClass="noBorderPanelGrid">
+		<p:row>
+			<p:column>
+				<h:outputText value="Expression" />
+			</p:column>
+			<p:column colspan="3">
+				<p:inputText value="#{documentSearchBean.trashCriteria.searchText}" size="40" id="searchInput"></p:inputText>
+				<p:watermark for="searchInput" value="Search with a keyword" id="watermark" />
+			</p:column>
+		</p:row>
+		<p:row>
+			<p:column>
+				<p:outputLabel value="Deleted from"></p:outputLabel>
+			</p:column>
+			<p:column>
+				<p:calendar value="#{documentSearchBean.trashCriteria.from}" showOn="button" pattern="MM/dd/yyyy" size="10"/>
+			</p:column>
+			<p:column>
+				<p:outputLabel value="to"></p:outputLabel>
+			</p:column>
+			<p:column>
+				<p:calendar value="#{documentSearchBean.trashCriteria.to}" showOn="button" pattern="MM/dd/yyyy" size="10"></p:calendar>
+			</p:column>
+		</p:row>
+		<p:row>
+			<p:column></p:column>
+			<p:column style="width:20px;" colspan="3">
+				<p:selectBooleanCheckbox value="#{documentSearchBean.searchMyDocument}" itemLabel="My Document"></p:selectBooleanCheckbox>
+			</p:column>
+		</p:row>
+		<p:row>
+			<p:column></p:column>
+			<p:column colspan="3">
+				<p:commandButton value="Search" icon="ui-icon-search" actionListener="#{documentSearchBean.doSearchTrash}"
+					update="@form @([id$=trashLstForm]) @([id$=documentLstForm])">
+				</p:commandButton>
+			</p:column>
+		</p:row>
+	</p:panelGrid>
+
+</h:form>
+
+</html>

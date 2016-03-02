@@ -1,0 +1,99 @@
+<menu>
+	<mainmenuList>
+		<mainmenu>
+			<code>document</code>
+			<name>Document</name>
+			<url>/faces/document/document.xhtml</url>
+			<icon>ui-icon-home</icon>
+		</mainmenu>
+		<mainmenu>
+			<code>search</code>
+			<name>Search</name>
+			<url>/faces/search/search.xhtml</url>
+			<icon>ui-icon-search</icon>
+		</mainmenu>
+		<mainmenu>
+			<code>admin</code>
+			<name>Administrator</name>
+			<url></url>
+			<icon>ui-icon-pencil</icon>
+			<groups>
+				<group>
+					<name>System</name>
+					<menuitems>
+						<menuitem>
+							<code>logs</code>
+							<name>Logs</name>
+							<url>/faces/admin/logs/logManagement.xhtml</url>
+						</menuitem>
+						<menuitem>
+							<code>report</code>
+							<name>Document Reports</name>
+							<url>/faces/admin/reports/documentReport.xhtml</url>
+						</menuitem>
+					</menuitems>
+				</group>
+				<group>
+					<name>Configuration</name>
+					<menuitems>
+						<menuitem>
+							<code>orgManagement</code>
+							<name>Manage Organization</name>
+							<security>true</security>
+							<url>/faces/admin/organization/organizationManagement.xhtml</url>
+						</menuitem>
+						<menuitem>
+							<code>orgStructureManagement</code>
+							<name>Manage Organization Structure</name>
+							<url>/faces/admin/organizationUnit/organizationUnitStruture.xhtml</url>
+						</menuitem>
+						<menuitem>
+							<code>userRoleManagement</code>
+							<name>Manage User Role</name>
+							<url>/faces/admin/userRole/userRoleManagement.xhtml</url>
+						</menuitem>
+						<menuitem>
+							<code>userManagement</code>
+							<name>Manage User</name>
+							<url>/faces/admin/user/userManagement.xhtml</url>
+						</menuitem>
+						<menuitem>
+							<code>menuSecurityManagement</code>
+							<name>Manage Menu Security</name>
+							<url>/faces/admin/menuSecurities/menuSecurityManagement.xhtml</url>
+						</menuitem>
+						<menuitem>
+							<code>mainCategories</code>
+							<name>Manage Category Structure Template</name>
+							<security>true</security>
+							<url>/faces/admin/mainCategories/mainCategoryManagement.xhtml</url>
+						</menuitem>
+					</menuitems>
+				</group>
+			</groups>
+		</mainmenu>
+		<mainmenu>
+			<code>assessment</code>
+			<name>Assessment</name>
+			<url>/faces/evaluation/evaluation.xhtml</url>
+			<icon>ui-icon-star</icon>
+		</mainmenu>
+		<mainmenu>
+			<code>help</code>
+			<name>Help</name>
+			<icon>ui-icon-help</icon>
+			<groups>
+				<group>
+					<name>About</name>
+					<menuitems>
+						<menuitem>
+							<code>product</code>
+							<name>Product News</name>
+							<url>/faces/help/about/product.xhtml</url>
+						</menuitem>
+					</menuitems>
+				</group>
+			</groups>
+		</mainmenu>
+	</mainmenuList>
+</menu>

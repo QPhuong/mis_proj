@@ -1,0 +1,36 @@
+.ui-icon-sort {
+    background-image: url(../images/icon/sort.png) !important;
+}
+
+.ui-icon-folder-red-locked {
+    background-image: url(../images/icon/folder_red_locked.png) !important;
+}
+
+.ui-icon-folder-green-locked {
+    background-image: url(../images/icon/folder_green_locked.png) !important;
+}
+
+.ui-icon-folder-blue {
+    background-image: url(../images/icon/folder_blue.png) !important;
+}
+
+.ui-icon-preview {
+	background-image: url(../images/icon/preview.png) !important;
+}
+
+.ui-icon-check-in {
+	background-image: url(../images/icon/check_in.png) !important;
+}
+
+.ui-icon-check-out {
+	background-image: url(../images/icon/check_out.png) !important;
+}
+
+.ui-icon-excel {
+	background-image: url(../images/icon/excel.png) !important;
+}
+
+.ui-icon-pdf {
+	background-image: url(../images/icon/pdf.png) !important;
+}
+

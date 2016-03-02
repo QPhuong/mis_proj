@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<h:form id="orgLstForm" style="width: 100%;margin-left: auto;margin-right: auto;">
+		
+		<p:panel styleClass="panelControlHeader">
+			<p:commandButton value="Add Organization" actionListener="#{orgMasterBean.doAddNewOrg}" ajax="true" 
+				update=":orgDetailForm" icon="ui-icon-plusthick" rendered="#{applicationSetupBean.multiOrganizationSetup and authenticationBean.logindUser.sysAdministrator}"/>
+		</p:panel>
+		
+		<h:panelGroup id="userRoleLstGroup" layout="block" styleClass="masterDataLstPanel">
+		
+			<p:dataTable id="organizationTable" var="org" value="#{orgMasterBean.orgLst}"
+				selection="#{orgMasterBean.selectedOrg}" selectionMode="single" rowKey="#{org.id}"
+				widgetVar="organizationWidgetVar" styleClass="organizationTable" scrollable="true"
+				filteredValue="#{orgMasterBean.orgFilterLst}">
+				
+				<f:facet name="header">
+		            <p:outputPanel>
+		                <h:outputText value="Filter all fields: " />
+		                <p:inputText id="globalFilter" onkeyup="PF('organizationWidgetVar').filter()" style="width:150px" 
+		                	placeholder="Enter keyword" value="#{orgMasterBean.filterText}"/>
+		            </p:outputPanel>
+	        	</f:facet>
+				  
+		        <p:column headerText="Organization Code" style="width:15%"  
+			        		filterStyle="display:none; visibility:hidden;" filterBy="#{org.code}" filterMatchMode="contains">  
+		            <h:outputText value="#{org.code}" />  
+		        </p:column>
+		        <p:column headerText="Organization Name"  
+			        		filterStyle="display:none; visibility:hidden;" filterBy="#{org.name}" filterMatchMode="contains">  
+		            <h:outputText value="#{org.name}" />  
+		        </p:column>   
+		  		<p:column headerText="Description" 
+			        		filterStyle="display:none; visibility:hidden;" filterBy="#{org.description}" filterMatchMode="contains">  
+		            <h:outputText value="#{org.description}" />  
+		        </p:column> 
+		        <p:column headerText="Active" style="width:30px;text-align: center; vertical-align: middle;">  
+		        	<p:selectBooleanCheckbox value="#{org.active}" disabled="true"/>
+		        </p:column>
+		        <p:column headerText="Owner Organization" style="width:70px;text-align: center; vertical-align: middle;">  
+		        	<p:selectBooleanCheckbox value="#{org.ownerOrganization}" disabled="true"/>
+		        </p:column>   
+				<p:column headerText="Edit" style="width:25px;text-align: center; vertical-align: middle;">  
+		             <p:commandButton ajax="true" icon="ui-icon-pencil" update="@form, :orgDetailForm" actionListener="#{orgMasterBean.doOrgDetailEdit}">
+		             	<f:setPropertyActionListener target="#{orgMasterBean.selectedOrg}" value="#{org}" />
+		             	<p:ajax update="@([id$=orgDetailForm])" resetValues="true" />
+		             </p:commandButton>
+		        </p:column>  
+				<p:column headerText="Delete" style="width:30px;text-align: center; vertical-align: middle;">  
+		            <p:commandButton id="showDialogButton" oncomplete="PF('confirmation').show()" ajax="true" 
+		            	update=":confirmDialog" icon="ui-icon-trash" disabled="#{(org.ownerOrganization or org.locked)}">  
+		             	<f:setPropertyActionListener target="#{orgMasterBean.selectedOrg}" value="#{org}" />
+		            </p:commandButton>
+		        </p:column>
+		        <p:column headerText="Document Category" style="width:60px;text-align: center; vertical-align: middle;">
+		        	<p:commandButton id="createCategories" ajax="true" update="@([id$=createCategoriesDlg])" icon="#{org.status}" 
+		        			oncomplete="PF('createCategoryDlgVar').show();" disabled="#{org.locked}" >
+		             	<f:setPropertyActionListener target="#{orgMasterBean.selectedOrg}" value="#{org}" />
+		             	<p:ajax update="@([id$=createCategoriesForm])" resetValues="true" />
+		            </p:commandButton>
+		            <p:tooltip for="createCategories" showEffect="clip" hideEffect="clip">
+					    <h:panelGroup layout="block" rendered="#{org.locked}">
+					    	<h:outputText value="The categories of the selected organization are created and locked because of the existing of uploaded documents." />
+					    	<br />
+					    	<h:outputText value="To re-create categories, please delete all uploaded documents" />
+					    </h:panelGroup>
+					    
+					    <h:panelGroup layout="block" rendered="#{!org.locked and (not empty org.rootCategory)}">
+					    	<h:outputText value="The categories of the selected organization are created." />
+						    <br/>
+						    <h:outputText value="By pressing this button, all categories will be deleted and re-created."/>
+					    </h:panelGroup>
+					    
+					    <h:panelGroup layout="block" rendered="#{!org.locked and (empty org.rootCategory)}">
+					    	<h:outputText value="The categories of the selected organization are not existing." />
+						    <br/>
+						    <h:outputText value="Press this button to create categories for this organization."/>
+					    </h:panelGroup>		
+					</p:tooltip>
+		        </p:column>
+		    </p:dataTable>
+	    </h:panelGroup>
+	</h:form>
+	
+	<p:confirmDialog id="confirmDialog" message="Are you sure to delete this organization (#{orgMasterBean.selectedOrg.name})?"  
+               header="Delete Organization Confirmation" severity="alert" widgetVar="confirmation" appendTo="@(body)">  
+       <h:form id="orgDeleteConfirmDialog">          
+       <h:panelGroup layout="block" style="float:right">
+	       <p:commandButton id="confirm" value="Yes" update=":orgLstForm" oncomplete="PF('confirmation').hide()"  
+	                   actionListener="#{orgMasterBean.doOrgDelete}" />  
+	       <p:commandButton id="decline" value="No" onclick="PF('confirmation').hide()" type="button" />
+       </h:panelGroup>   
+        </h:form>         
+	</p:confirmDialog>
+
+	<p:dialog id="createCategoriesDlg" header="Create Categories" widgetVar="createCategoryDlgVar" appendTo="@(body)"
+		showEffect="clip" hideEffect="clip">
+		<h:form id="createCategoriesForm">
+			<p:message for="categoryTypeSelector" ></p:message>
+			<p:panelGrid styleClass="noBorderPanelGrid">
+				<p:row>
+					<p:column>
+						<h:outputText value="Category Type"></h:outputText>
+					</p:column>
+					<p:column>
+						<p:selectOneMenu value="#{orgMasterBean.selectedCategoryType}" effect="fade" converter="#{mainCategoryTypeConverter}" 
+							var="type" required="true" id="categoryTypeSelector">
+							<f:selectItems value="#{orgMasterBean.categoryTypes}" var="item" itemLabel="#{item.name}" itemValue="#{item}"/>
+							<p:column>
+				                <h:outputText value="#{type.name}" />
+				            </p:column>
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column></p:column>
+					<p:column>
+						<p:commandButton value="Create" actionListener="#{orgMasterBean.doGenerateCategories}" style="margin-right:5px;" icon="ui-icon-disk"
+							update="@([id$=orgLstForm])" disabled="${empty orgMasterBean.selectedCategoryType}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('createCategoryDlgVar').hide()"/>
+						<p:commandButton value="Cancel" icon="ui-icon-cancel" oncomplete="PF('createCategoryDlgVar').hide();"/>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+	
+	
+</html>

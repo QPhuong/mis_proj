@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/templates/layoutAdministrator.xhtml">
+	<ui:define name="adminCenter">
+		<pe:layoutPane position="center" size="50%" styleContent="overflow: hidden">
+			<!-- <h:outputText value="User Management" styleClass="ui-widget" style="font-size:14px;font-weight:bold;"/> -->
+			<ui:include src="userList.xhtml"/>
+		</pe:layoutPane>
+		<pe:layoutPane position="south" size="50%" closable="false">
+			<p:tabView dynamic="true" cache="true" id="userInfoTab" orientation="left" styleClass="userInfoTabView">
+				<p:ajax event="tabChange" update=":userInfoTab" listener="#{userBean.onTabChange}"/>
+				<p:tab title="User Profile" id="userProfileTab">
+					<ui:include src="userDetail.xhtml"/>
+				</p:tab>
+				<p:tab title="User Role Assingment" id="userRoleAssignmentTab">
+					<ui:include src="userRoleAssignment.xhtml"/>
+				</p:tab>
+			</p:tabView>
+			
+		</pe:layoutPane>
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<h:form id="catTypeLstForm" style="width: 100%;margin-left: auto;margin-right: auto;" >
+	
+		<h:panelGroup layout="block" rendered="#{mainCategoryBean.renderMainCategoryTypeTab}">
+			<p:panel styleClass="panelControlHeader">
+				<p:commandButton value="Add New" actionListener="#{mainCategoryTypeBean.doAddNewCategoryType}" ajax="true" 
+					update="@([id$=catTypeDetailForm])" icon="ui-icon-plusthick">
+					<p:ajax update="@([id$=catTypeDetailForm])" resetValues="true" />
+				</p:commandButton>
+			</p:panel>
+			
+			<h:panelGroup id="userRoleLstGroup" layout="block" styleClass="mainCategoryLstPanel">
+			
+				<p:dataTable id="dataTable" var="type" value="#{mainCategoryTypeBean.categoryTypeLst}"
+					selection="#{mainCategoryTypeBean.selectedCategoryType}" selectionMode="single" rowKey="#{type.id}"
+					widgetVar="mainCategoryWidgetVar" styleClass="mainCategoryTable" scrollable="true" scrollHeight="100"
+					filteredValue="#{mainCategoryTypeBean.categoryTypeFilterLst}">  
+					<script>
+					function clearFileter() {
+						if (typeof PF('mainCategoryWidgetVar' !== "undefined") {
+							PF('mainCategoryWidgetVar').clearFilters();	
+						}
+					};
+					</script>
+					<f:facet name="header">
+			            <p:outputPanel>
+			                <h:outputText value="Filter all fields: " />
+			                <p:inputText id="globalFilter" onkeyup="PF('mainCategoryWidgetVar').filter()" style="width:150px" 
+			                	placeholder="Enter keyword" value="#{mainCategoryTypeBean.filterText}"/>
+			            </p:outputPanel>
+		        	</f:facet>
+		        	
+			        <p:column headerText="Category Type Code" style="width:15%" resizable="true" 
+			        		filterStyle="display:none; visibility:hidden;" filterBy="#{type.code}" filterMatchMode="contains">  
+			            <h:outputText value="#{type.code}" />  
+			        </p:column>
+			        <p:column headerText="Category Type Name" 
+			        		filterStyle="display:none; visibility:hidden;" filterBy="#{type.name}" filterMatchMode="contains">  
+			            <h:outputText value="#{type.name}" />  
+			        </p:column>   
+			  		<p:column headerText="Description"
+			        		filterStyle="display:none; visibility:hidden;" filterBy="#{type.description}" filterMatchMode="contains">  
+			            <h:outputText value="#{type.description}" />  
+			        </p:column> 
+			        
+					<p:column headerText="Edit" style="width:25px;text-align: center; vertical-align: middle;">  
+			             <p:commandButton icon="ui-icon-pencil" update="@([id$=catTypeDetailForm])" action="#{mainCategoryTypeBean.doCategoryTypeDetailEdit}">
+			             	<f:setPropertyActionListener target="#{mainCategoryTypeBean.selectedCategoryType}" value="#{type}" />
+			             	<p:ajax update="@([id$=catTypeDetailForm])" resetValues="true" />
+			             </p:commandButton>
+			        </p:column>  
+			        
+					<p:column headerText="Delete" style="width:30px;text-align: center; vertical-align: middle;">  
+			            <p:commandButton id="showDialogButton" oncomplete="PF('confirmation').show()" action="#{mainCategoryTypeBean.doCategoryTypeDetailEdit}"
+			            	update="@([id$=confirmDialog])" icon="ui-icon-trash" process="@form">  
+			             	<f:setPropertyActionListener target="#{mainCategoryTypeBean.selectedCategoryType}" value="#{type}" />
+			            </p:commandButton>
+			        </p:column>
+			    </p:dataTable>
+		    </h:panelGroup>
+	    </h:panelGroup>
+	</h:form>
+	
+	<p:confirmDialog id="confirmDialog" message="Are you sure to delete this category type (#{mainCategoryTypeBean.selectedCategoryType.name})?"  
+               header="Delete Category Type Confirmation" severity="alert" widgetVar="confirmation" appendTo="@(body)"
+               showEffect="drop" hideEffect="drop" >  
+       <h:form id="catTypeDeleteConfirmDialog">          
+       <h:panelGroup layout="block" style="float:right">
+	       <p:commandButton id="confirm" value="Yes" update="@([id$=catTypeLstForm]) @([id$=catTypeDetailForm])" oncomplete="PF('confirmation').hide()"  
+	                   actionListener="#{mainCategoryTypeBean.doCategoryTypeDelete}" />  
+	       <p:commandButton id="decline" value="No" onclick="PF('confirmation').hide()" type="button" />
+       </h:panelGroup>   
+        </h:form>         
+	</p:confirmDialog>
+
+</html>

@@ -1,0 +1,166 @@
+<category>
+	<code></code>
+	<name>Tài liệu triển khai ISO 27001:2013</name>
+	<description></description>
+	<subcategories>
+		<category>
+			<code>0</code>
+			<name>00 Thủ tục kiểm soát tài liệu và hồ sơ</name>
+			<description></description>
+		</category>
+		<category>
+			<code>1</code>
+			<name>01 Kế hoạch dự án</name>
+			<description></description>
+		</category>
+		<category>
+			<code>2</code>
+			<name>02 Phương pháp xác định các yêu cầu</name>
+			<description></description>
+		</category>
+		<category>
+			<code>3</code>
+			<name>03 Phạm vi của ISMS</name>
+			<description></description>
+		</category>
+		<category>
+			<code>4</code>
+			<name>04 Chính sách bảo mật thông tin và các mục tiêu</name>
+			<description></description>
+		</category>
+		<category>
+			<code>5</code>
+			<name>05 Đánh giá rủi ro và phương pháp xử lý rủi ro</name>
+			<description></description>
+		</category>
+		<category>
+			<code>6</code>
+			<name>06 Tuyên bố áp dụng</name>
+			<description></description>
+		</category>
+		<category>
+			<code>7</code>
+			<name>07 Kế hoạch xử lý rủi ro</name>
+			<description></description>
+		</category>
+		<category>
+			<code>8</code>
+			<name>08 Phụ lục A</name>
+			<description></description>
+			<subcategories>
+				<category>
+					<code>A.5</code>
+					<name>A.5 Các Chính Sách An Ninh Thông Tin</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.6</code>
+					<name>A.6 An Toàn Thông Tin Của Tổ Chức</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.7</code>
+					<name>A.7 An Toàn Nguồn Nhân Lực</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.8</code>
+					<name>A.8 Quản Lý Tài Sản</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.9</code>
+					<name>A.9 Kiểm Soát Truy Cập</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.10</code>
+					<name>A.10 Mã Hóa</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.11</code>
+					<name>A.11 An Toàn Vật Lý Và Môi Trường</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.12</code>
+					<name>A.12 An Toàn Vận Hành</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.13</code>
+					<name>A.13 An Toàn Truyền Thông</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.14</code>
+					<name>A.14 Tiếp Nhận, Phát Triển, Duy Trì Hệ Thống</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.15</code>
+					<name>A.15 Mối Quan Hệ Với Nhà Cung Cấp</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.16</code>
+					<name>A.16 Quản Lý Sự Cố An Toàn Thông Tin</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.17</code>
+					<name>A.17 Kinh Doanh Liên Tục</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.18</code>
+					<name>A.18 Sự Tuân Thủ</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+			</subcategories>
+		</category>
+		<category>
+			<code>9</code>
+			<name>09 Kế hoạch đào tạo và nâng cao trình độ chuyên môn</name>
+			<description></description>
+			<subcategories>
+			</subcategories>
+		</category>
+		<category>
+			<code>10</code>
+			<name>10 Thủ tục kiểm toán nội bộ</name>
+			<description></description>
+			<subcategories>
+			</subcategories>
+		</category>
+		<category>
+			<code>11</code>
+			<name>11 Kết quả việc xem xét của quản lý</name>
+			<description></description>
+			<subcategories>
+			</subcategories>
+		</category>
+		<category>
+			<code>12</code>
+			<name>12 Quy trình hoạt động khắc phục</name>
+			<description></description>
+			<subcategories>
+			</subcategories>
+		</category>
+	</subcategories>
+</category>

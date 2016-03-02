@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+	
+<h:form id="mainCategoryTreeForm">
+	<p:remoteCommand name="selectSort" update="@form" actionListener="#{mainCategoryBean.doLoadCategoryTree}" process="@form"/>
+	<style>
+	.noBorderRadioButton .ui-radiobutton .ui-radiobutton-box {
+		border: none;
+	}
+	</style>
+	<h:panelGroup rendered="${not empty mainCategoryBean.root}" layout="block" >
+		<p:commandButton id="sortCategoryBtn" icon="ui-icon-sort" title="Sort" style="float:right;z-index:1;" rendered="#{mainCategoryBean.existingMainCategory}" />
+		<p:overlayPanel showEffect="blind" hideEffect="explode" for="sortCategoryBtn" style="width:150px;position:fixed;">
+			<h:panelGroup layout="block">
+			<p:selectOneRadio id="sortValue" value="#{mainCategoryBean.selectedSortValue}" layout="grid" columns="1" 
+					onchange="selectSort();" styleClass="noBorderRadioButton" converter="#{propertyConverter}">
+	            <f:selectItems value="#{mainCategoryBean.sortCategoryValues}" var="item" itemLabel="#{item.value.displayedName}"/>
+	        </p:selectOneRadio>
+	        <p:separator />
+	        <p:selectOneRadio id="sortType" value="#{mainCategoryBean.selectedSortType}" layout="grid" columns="1" 
+	        		onchange="selectSort();" styleClass="noBorderRadioButton" converter="#{propertyConverter}">
+	            <f:selectItems value="#{mainCategoryBean.sortTypes}" var="item" itemLabel="#{item.value.text}"/>
+	        </p:selectOneRadio>
+	        </h:panelGroup>
+		</p:overlayPanel>
+		<p:tree value="#{mainCategoryBean.root}" var="node" id="categories" selectionMode="single" styleClass="noBorderTreeNode" style="width:100%; heigh:100%;"
+			selection="#{mainCategoryBean.selectedNode}" dynamic="true" >
+			
+			<p:ajax event="select" listener="#{mainCategoryBean.onNodeSelect}" update="@([id$=mainCategoryDetailPanel]) @form"/>
+			<p:ajax event="unselect" listener="#{mainCategoryBean.onNodeUnSelect}" update="@([id$=mainCategoryDetailPanel]) @form"/>
+			
+	        <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+	            <h:outputText value="#{node.name}" />
+	            <h:graphicImage url="/images/icon/comment_alert.png" style="margin-left:5px;margin-right:5px;margin-top:-10px;" rendered="#{empty node.id}" id="nodeAlert"/>	            
+	            <p:tooltip for="nodeAlert" showEffect="clip" hideEffect="clip">
+				    <h:outputText value="This main category is not saved into the system yet." />
+				    <br/>
+				    <h:outputText value="Please press 'Save All' to save all temporary categories."/>		
+				</p:tooltip>
+	        </p:treeNode>
+	    </p:tree>
+    </h:panelGroup>
+</h:form>    
+		
+</html>

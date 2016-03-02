@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      >
+<h:head>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>
+    	<ui:insert name="title">ISO 27001:2013 Evidence Management Home</ui:insert>
+    </title>
+    <link rel="stylesheet" href="#{request.contextPath}/css/style.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/css/icon.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/css/overrideDefault.css"/>
+</h:head>
+<h:body>
+	<ui:include src="/templates/header.xhtml" />
+	<h:form style="height:100%;">
+		<p:panel style="width:60%; vertical-align: center;margin-left: auto;margin-right: auto;padding-top: 30px;border:none">
+			<p:outputLabel value="The application is installed successfully." style="font-size: 30px;padding-bottom:20px;color: rgb(56,128,180)"/>
+			<br/><br/>
+			<p:outputLabel value="To log in, click " style="font-size:13px;color: rgb(56,128,180)"/>
+			<h:outputLink value="#{request.contextPath}/faces/login.xhtml" style="font-size:13px;color: rgb(56,128,180)">here</h:outputLink>
+		</p:panel>
+	</h:form>
+</h:body>
+
+</html>

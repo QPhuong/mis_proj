@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+	<h:form id="userRoleLstForm">
+		<p:remoteCommand name="changeSelectedOrganization" actionListener="#{userRoleBean.doLoadUserRoleLst}" 
+					update="@([id$=userRoleLstForm]), @([id$=userRoleDetailForm])" />
+		<p:panel styleClass="panelControlHeader">
+			<p:panelGrid columns="3" styleClass="noBorderPanelGrid">
+				<p:outputLabel value="Organization: " rendered="#{userRoleBean.multiOrganization}"/>
+				<p:selectOneMenu value="#{userRoleBean.selectedOrganization}" effect="fade" id="org" converter="#{organizationConverter}" var="org"
+						onchange="changeSelectedOrganization()" rendered="#{userRoleBean.multiOrganization}">
+					<f:selectItems value="#{userRoleBean.organizationLst}" var="item" itemLabel="#{item.name}" itemValue="#{item}"/>
+					<p:column>
+		                <h:outputText value="#{org.name}" />
+		            </p:column>
+				</p:selectOneMenu>			
+				<p:commandButton value="Add Role" actionListener="#{userRoleBean.doAddNewUserRole}" disabled="#{not userRoleBean.enableAddRole}"
+					ajax="true" update=":userRoleDetailForm" icon="ui-icon-plusthick"/>
+			</p:panelGrid>
+		</p:panel>
+		
+		<h:panelGroup id="userRoleLstGroup" layout="block" styleClass="masterDataLstPanel">
+			<p:dataTable id="dataTable" var="userRole" value="#{userRoleBean.userRoleLst}" 
+					selection="#{userRoleBean.selectedUserRole}" selectionMode="single" rowKey="#{userRole.id}"
+					widgetVar="userRoleWidgetVar" styleClass="userRoleTable" scrollable="true"
+					filteredValue="#{userRoleBean.userRoleFilterLst}" >
+					
+				<f:facet name="header">
+		            <p:outputPanel>
+		                <h:outputText value="Filter all fields: " />
+		                <p:inputText id="globalFilter" onkeyup="PF('userRoleWidgetVar').filter()" style="width:150px"
+		                	placeholder="Enter keyword" />
+		            </p:outputPanel>
+	        	</f:facet>
+	        		  
+		        <p:column headerText="Role Code" style="width:15%" 
+		        		filterStyle="display:none; visibility:hidden;" filterBy="#{userRole.code}" filterMatchMode="contains">  
+		            <h:outputText value="#{userRole.code}" />  
+		        </p:column>
+		        <p:column headerText="Role Name" style="width:25%"
+		        		filterStyle="display:none; visibility:hidden;" filterBy="#{userRole.name}" filterMatchMode="contains">  
+		            <h:outputText value="#{userRole.name}" />  
+		        </p:column>  
+		  		<p:column headerText="Description"
+		        		filterStyle="display:none; visibility:hidden;" filterBy="#{userRole.description}" filterMatchMode="contains">  
+		            <h:outputText value="#{userRole.description}" />  
+		        </p:column> 
+		        <p:column headerText="System Admin" style="width:75px;text-align: center; vertical-align: middle;" 
+		        		rendered="#{userRoleBean.selectedOrganization.ownerOrganization}">
+		        	<p:selectBooleanCheckbox value="#{userRole.systemAdminRole}" disabled="true"/> 
+		        </p:column>
+		        <p:column headerText="Organization Admin" style="width:75px;text-align: center; vertical-align: middle;">
+		        	<p:selectBooleanCheckbox value="#{userRole.organizationAdminRole}" disabled="true"/> 
+		        </p:column>
+				<p:column headerText="Edit" style="width:25px;text-align: center; vertical-align: middle;">  
+		             <p:commandButton ajax="true" icon="ui-icon-pencil" update="dataTable, :userRoleDetailForm" actionListener="#{userRoleBean.doUserRoleDetailEdit}">
+		             	<f:setPropertyActionListener target="#{userRoleBean.selectedUserRole}" value="#{userRole}" />
+		             	<p:ajax update="@([id$=userRoleDetailForm])" resetValues="true" />
+		             </p:commandButton>
+		        </p:column>  
+				<p:column headerText="Delete" style="width:30px;text-align: center; vertical-align: middle;">  
+		            <p:commandButton id="showDialogButton" oncomplete="PF('confirmation').show()" ajax="true" 
+		            	update=":confirmDialog" icon="ui-icon-trash" disabled="#{userRole.systemAdminRole}">  
+		             	<f:setPropertyActionListener target="#{userRoleBean.selectedUserRole}" value="#{userRole}" />
+		            </p:commandButton>
+		        </p:column>
+		    </p:dataTable>
+		</h:panelGroup>
+	</h:form>
+	
+	<p:confirmDialog id="confirmDialog" message="Are you sure to delete this user (#{userRoleBean.selectedUserRole.name})?"  
+               header="Delete Role" severity="alert" widgetVar="confirmation" appendTo="@(body)">  
+       <h:form id="userRoleDeleteConfirmDialog" style="float:right">          
+       <p:commandButton id="confirm" value="Yes" update=":userRoleLstForm" oncomplete="PF('confirmation').hide();"  
+                   actionListener="#{userRoleBean.doUserRoleDelete}" />  
+       <p:commandButton id="decline" value="No" onclick="PF('confirmation').hide()" type="button" />   
+        </h:form>         
+	</p:confirmDialog>
+
+</html>

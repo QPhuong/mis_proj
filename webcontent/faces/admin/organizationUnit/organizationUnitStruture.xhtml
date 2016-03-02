@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/templates/layoutAdministrator.xhtml">
+	<ui:define name="adminCenter">
+	<pe:layoutPane position="west" size="320" resizable="true" minWidth="200">
+<script>
+	var siteFunctions = {
+		    //patch to fix a problem that the context menu disappears after update
+		    //delay the show to occure after the update 
+		    patchContextMenuShow: function() {
+		        'use strict';
+		        
+		        var protShow = PrimeFaces.widget.ContextMenu.prototype.show;
+		        siteFunctions.patchContextMenuShow.lastEvent = null;
+		        PrimeFaces.widget.ContextMenu.prototype.show = function(e) {
+		            var ret;
+		            if (e) {
+		                siteFunctions.patchContextMenuShow.lastEvent = e;
+		                siteFunctions.patchContextMenuShow.lastEventArg = arguments;
+		                siteFunctions.patchContextMenuShow.lastEventContext = this;
+		            } else if (siteFunctions.patchContextMenuShow.lastEvent) {
+		                ret = protShow.apply(siteFunctions.patchContextMenuShow.lastEventContext, siteFunctions.patchContextMenuShow.lastEventArg);
+		                siteFunctions.patchContextMenuShow.lastEvent = null;
+		            }
+		            return ret;
+		        };
+		    }
+		};
+		$(document).ready(function() {
+		    'use strict';
+		    try {
+		        siteFunctions.patchContextMenuShow();
+		    } catch (e) {
+		        console.error(e);
+		    }
+		});
+</script>
+		<h:form id="orgUnitHierachyForm">	
+			<p:commandButton id="resetEditDialog" style="display:none">
+				<p:ajax update=":editOrgUnitForm" resetValues="true" />
+			</p:commandButton>
+			<p:growl id="messages" showDetail="false" autoUpdate="false" />
+			<p:commandButton value="Create Organization Structure" oncomplete="PF('editOrgUnitDialogVar').show()" style="margin-top:5px;margin-bottom:5px" 
+        			update=":editOrgUnitDialog" actionListener="#{orgHierachyBean.doAddOrganizationUnit}" rendered="#{orgHierachyBean.emptyStructure}">
+        			<p:ajax update=":editOrgUnitForm" resetValues="true" />
+		    </p:commandButton>    			
+			<p:tree value="#{orgHierachyBean.root}" var="node" id="orgUnit" selectionMode="single" styleClass="orgUnitHierachy"
+				selection="#{orgHierachyBean.selectedNode}" dynamic="true">
+				<p:ajax event="select" listener="#{orgHierachyBean.onNodeSelect}" update=":orgUnitTab"/>
+				<p:ajax event="unselect" listener="#{orgHierachyBean.onNodeUnSelect}" update=":orgUnitTab"/>
+		        <p:ajax event="contextMenu" update="@([id$=contextmenu])" listener="#{orgHierachyBean.onNodeSelect}"
+				oncomplete="PF('orgUnitContextMenuVar').show();"/>
+				
+		        <p:treeNode expandedIcon="ui-icon-person" collapsedIcon="ui-icon-person">
+		            <h:outputText value="#{node.name}" />
+		        </p:treeNode>
+		    </p:tree>
+		    
+		    <p:contextMenu for="orgUnit" id="contextmenu" widgetVar="orgUnitContextMenuVar">
+		        <p:menuitem value="New Organization Unit" icon="ui-icon-circle-plus" oncomplete="PF('editOrgUnitDialogVar').show()" 
+		        			update=":editOrgUnitDialog" actionListener="#{orgHierachyBean.doAddOrganizationUnit}"
+		        			onclick="$('[id*=resetEditDialog]').click()">		        	
+		        </p:menuitem>
+		        <p:menuitem value="Delete Organization Unit" icon="ui-icon-trash" oncomplete="PF('confirmationDelete').show()" ajax="true" 
+			            	update=":confirmDeleteOrgUnitDialog"/>
+		        <p:menuitem value="Rename Organization Unit" icon="ui-icon-pencil" oncomplete="PF('editOrgUnitDialogVar').show()"
+		        			update=":editOrgUnitDialog" actionListener="#{orgHierachyBean.doRenameOrganizationUnit}">
+		        </p:menuitem>
+		        <p:menuitem value="Move Organization Unit" icon="ui-icon-arrow-4" oncomplete="PF('moveOrgUnitDialogVar').show()"
+		        			update=":moveOrgUnitDialog" actionListener="#{orgHierachyBean.doOpenMoveToDialog}"/>
+		    </p:contextMenu> 
+		</h:form>
+		
+		<p:dialog id="editOrgUnitDialog" header="#{orgHierachyBean.editOrgUnitDialogHeader}" widgetVar="editOrgUnitDialogVar" 
+						appendTo="@(body)" modal="true">  
+		      <h:form id="editOrgUnitForm">
+		      		<p:messages />
+					<p:panelGrid cellpadding="5" id="newCategoryPanel" styleClass="newCategoryDialogPanel">
+						<p:row>
+							<p:column style="width:150px"><p:outputLabel for="orgUnitCode" value="Organization Unit Code: " /></p:column>
+							<p:column><p:inputText id="orgUnitCode" size="60" value="#{orgHierachyBean.selectedOrgUnit.code}" required="true"/></p:column>
+						</p:row>
+						<p:row>
+							<p:column style="width:150px"><p:outputLabel for="orgUnitName" value="Organization Unit name: " /></p:column>
+							<p:column><p:inputText id="orgUnitName" size="60" value="#{orgHierachyBean.selectedOrgUnit.name}" required="true"/></p:column>
+						</p:row>
+			            <p:row>
+			            	<p:column><p:outputLabel for="orgUnitDescription" value="Organization Unit Description: " /></p:column>
+			            	<p:column><p:inputTextarea id="orgUnitDescription" rows="5" cols="61" autoResize="false" value="#{orgHierachyBean.selectedOrgUnit.description}"/></p:column>
+			            </p:row>
+			            <p:row>
+			            	<p:column></p:column>
+			            	<p:column>
+			            		<p:commandButton id="confirm" value="Save" update=":orgUnitHierachyForm, :orgUnitTab, @form" 
+			            				oncomplete="if (args &amp;&amp; !args.validationFailed) PF('editOrgUnitDialogVar').hide()"  
+							            actionListener="#{orgHierachyBean.doSaveOrganizationUnit}" style="margin-right:5px;"/>  
+							    <p:commandButton id="decline" value="Cancel" onclick="PF('editOrgUnitDialogVar').hide()" type="button" /> 
+			            	</p:column>
+			            </p:row>
+			        </p:panelGrid>         
+		      </h:form>         
+		</p:dialog> 
+		
+		<p:confirmDialog id="confirmDeleteOrgUnitDialog" message="Are you sure to delete this organization unit (#{orgHierachyBean.selectedOrgUnit.name})?"  
+              header="Delete Organization Unit Confirmation" severity="alert" widgetVar="confirmationDelete" appendTo="@(body)">  
+		      <h:form id="categoryDeleteConfirmDialog">
+		      		<h:panelGroup layout="block" style="float:right">          
+					      <p:commandButton id="confirm" value="Yes" update=":orgUnitHierachyForm, :orgUnitTab" oncomplete="PF('confirmationDelete').hide()"  
+					                  actionListener="#{orgHierachyBean.doDeleteCategory}" />  
+					      <p:commandButton id="decline" value="No" onclick="PF('confirmationDelete').hide()" type="button" />
+			      	</h:panelGroup>   
+		       </h:form>         
+		</p:confirmDialog>
+		
+		<p:dialog id="moveOrgUnitDialog" header="Move to another organization unit" widgetVar="moveOrgUnitDialogVar" appendTo="@(body)" 
+				modal="true">  
+		      <h:form id="moveOrgUnitForm"> 
+				<p:tree value="#{orgHierachyBean.movetoRootNode}" var="node" id="orgUnit" selectionMode="single"
+						selection="#{orgHierachyBean.moveToselectedNode}" dynamic="true" style="width:100%; height:100%;margin-bottom:5px;">
+					<p:ajax event="select" update=":moveOrgUnitForm" listener="#{orgHierachyBean.onMoveToNodeSelect}"/>
+					<p:ajax event="unselect" update=":moveOrgUnitForm" listener="#{orgHierachyBean.onMoveToNodeUnSelect}"/>
+				    <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+				    	<h:outputText value="#{node.name}" />
+				    </p:treeNode>
+				</p:tree>
+				<h:panelGroup style="margin-left:50px; margin-right:auto;" id="orgMoveBtnPanel">
+					<p:commandButton id="saveMoveOrgUnit" value="Save" update=":orgUnitHierachyForm, :orgUnitTab" oncomplete="PF('moveOrgUnitDialogVar').hide()"  
+			                  actionListener="#{orgHierachyBean.doMoveCategory}" style="margin-right:5px;" disabled="#{not orgHierachyBean.selectMoveToCategoryNode}"/>  
+				    <p:commandButton id="decline" value="Cancel" onclick="PF('moveOrgUnitDialogVar').hide()" type="button" />
+				</h:panelGroup>   
+		      </h:form>         
+		</p:dialog>
+	</pe:layoutPane>
+	
+	<pe:layoutPane position="center">
+		<p:tabView dynamic="true" cache="true" id="orgUnitTab" styleClass="orgUnitTabView" scrollable="true" activeIndex="#{orgHierachyBean.activeTabIndex}">
+				<p:ajax event="tabChange" update=":orgUnitTab" listener="#{orgHierachyBean.onTabChange}"/>
+				<p:tab title="Organization Chart" id="orgUnitChartTab">
+					<pe:gChart value="#{orgHierachyBean.treeChartModel}" id="orgChart">
+					</pe:gChart> 
+				</p:tab>
+				<p:tab title="Assign Users to Org Unit" id="userAssignmentTab" rendered="#{orgHierachyBean.selectCategoryNode}">
+					<ui:include src="organizationUnitAssignment.xhtml"></ui:include>
+				</p:tab>
+			</p:tabView>
+		
+	</pe:layoutPane>
+</ui:define>
+</ui:composition> 
+</html>

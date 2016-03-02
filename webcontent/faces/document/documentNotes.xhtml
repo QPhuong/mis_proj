@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:form id="documentNotesForm">
+	
+	<p:panel styleClass="panelControlHeader" rendered="#{documentNotesBean.selectedDoc.canEdit(authenticationBean.logindUser)}">
+		
+		<p:commandButton actionListener="#{documentNotesBean.doAddNewNote}" value="Add note" update="@form"
+				id="addBtn" icon="ui-icon-plusthick" style="margin-left:5px;margin-right: 10px;" >
+		</p:commandButton>
+		<p:commandButton value="Refresh" update="@form" icon="ui-icon-refresh" process="@this"
+				actionListener="#{documentNotesBean.doLoadDocumentNotes}">
+		</p:commandButton>
+		<p:commandButton id="resetDocNoteDialog" value="Reset" style="display:none;" oncomplete="PF('noteContentVar').focus();">
+			<p:ajax update="@form" resetValues="true" />
+		</p:commandButton>
+	</p:panel>
+	
+	<h:panelGroup layout="block" styleClass="docNotesPanel">
+		<style>	
+		.docNotesPanel .ui-datalist {
+			margin-left:-40px !important;
+			width:100%  !important;
+		}
+		.docNotesPanel .ui-datalist .ui-datalist-item .ui-panel-content {
+			padding: 0px !important;
+		}
+		</style>
+		<p:panel style="margin-bottom:4px;width:100%" rendered="#{documentNotesBean.addNew}">
+			<p:messages severity="error"/>
+			<p:outputLabel for="contentEditor" value="Note content" style="display:none"></p:outputLabel>
+			<p:editor value="#{documentNotesBean.selectedNote.content}" widgetVar="noteContentVar" 
+					required="true" id="contentEditor" height="150" 
+		            controls="bold italic underline strikethrough subscript superscript | font size style | color highlight removeformat | bullets numbering | outdent indent | alignleft center alignright justify | undo redo | rule link unlink | cut copy paste pastetext | source">
+		    </p:editor>
+			<h:panelGroup style="margin-left:auto; margin-right:auto;margin-top:5px;vertical-align: center;width:150px;" layout="block">
+				<p:commandButton id="save" value="Save" update="@form" icon="ui-icon-disk"						
+		                actionListener="#{documentNotesBean.doSaveNote}" style="margin-right:5px;">
+		                <f:setPropertyActionListener target="#{documentNotesBean.addNew}" value="false" />
+		        </p:commandButton>
+			    <p:commandButton id="cancel" value="Cancel" icon="ui-icon-cancel"
+			    	actionListener="#{documentNotesBean.doCancelEditNote}" process="@this" update="@form">
+			    		<f:setPropertyActionListener target="#{documentNotesBean.addNew}" value="false" />
+			    </p:commandButton>
+			</h:panelGroup>  
+		</p:panel>
+		
+		<p:dataList value="#{documentNotesBean.lstNote}" var="note" type="unordered" itemType="none" style="" 
+			emptyMessage="" styleClass="noBorderDataList">
+			<p:panel style="margin-bottom:4px;width:100%">
+				<p:panelGrid styleClass="noBorderPanelGrid" style="width:99%;">
+					<p:row>
+						<p:column>
+							<h:outputText value="#{note.content}" escape="false" rendered="#{!note.editing}"></h:outputText>
+							<h:panelGroup layout="block" rendered="#{note.editing}">
+								<p:messages severity="error"/>
+								<p:outputLabel for="contentEditor" value="Note content" style="display:none"></p:outputLabel>
+								<p:editor value="#{note.content}" widgetVar="noteContentVar" 
+										required="true" id="contentEditor" height="150" 
+							            controls="bold italic underline strikethrough subscript superscript | font size style | color highlight removeformat | bullets numbering | outdent indent | alignleft center alignright justify | undo redo | rule link unlink | cut copy paste pastetext | source">
+							    </p:editor>
+								<h:panelGroup style="margin-left:auto; margin-right:auto;margin-top:5px;vertical-align: center;width:150px;" layout="block">
+									<p:commandButton id="save" value="Save" update="@form" icon="ui-icon-disk"
+											oncomplete="if (args &amp;&amp; !args.validationFailed) PF('docNoteDialogVar').hide()" 
+							                actionListener="#{documentNotesBean.doSaveNote}" style="margin-right:5px;" >
+							        	<f:setPropertyActionListener target="#{documentNotesBean.selectedNote}" value="#{note}" />
+							        </p:commandButton>
+								    <p:commandButton id="cancel" value="Cancel" icon="ui-icon-cancel" process="@this" update="@form"
+								    	actionListener="#{documentNotesBean.doCancelEditNote}">
+								    	<f:setPropertyActionListener target="#{note.editing}" value="false" />
+								    </p:commandButton>
+								</h:panelGroup>  
+							</h:panelGroup>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<p:panelGrid columns="4" styleClass="noBorderPanelGrid">
+								<h:outputText value="Created by: #{note.createdBy.fullname} "></h:outputText>
+								<h:outputText value="#{note.createdOn}">
+									<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" />
+								</h:outputText>
+								<p:commandLink title="Edit" styleClass="ui-icon ui-icon-pencil"  
+									rendered="#{(authenticationBean.logindUser.id) eq (note.createdBy.id) and (documentNotesBean.selectedDoc.canEdit(authenticationBean.logindUser))}"
+       								update="@form" >
+									<f:setPropertyActionListener target="#{note.editing}" value="true" />
+									<f:setPropertyActionListener target="#{documentNotesBean.selectedNote}" value="#{note}" />
+								</p:commandLink>
+								<p:commandLink title="Delete" styleClass="ui-icon ui-icon-trash" style="margin-left:-15px;"
+									rendered="#{(authenticationBean.logindUser.id) eq (note.createdBy.id) and (documentNotesBean.selectedDoc.canEdit(authenticationBean.logindUser))}"
+									oncomplete="PF('confirmDeleteNoteVar').show()">
+									<f:setPropertyActionListener target="#{documentNotesBean.selectedNote}" value="#{note}" />	
+								</p:commandLink>
+								<h:outputText value="Updated by: #{note.updatedBy.fullname} " rendered="#{(not empty note.updatedBy)}"/>
+								<h:outputText value="#{note.updatedOn}">
+									<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" rendered="#{(not empty note.updatedBy)}"/>
+								</h:outputText>
+							</p:panelGrid>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:panel>
+		</p:dataList>
+	</h:panelGroup>
+
+</h:form>
+
+<p:confirmDialog id="confirmDeleteNoteDialog" message="Are you sure to delete this note ?"  
+              header="Delete Note Confirmation" severity="alert" widgetVar="confirmDeleteNoteVar" appendTo="@(body)">  
+      <h:form style="float:right;">          
+      <p:commandButton id="confirm" value="Yes" update="@([id$=documentNotesForm])" 
+      		oncomplete="PF('confirmDeleteNoteVar').hide()"  
+            actionListener="#{documentNotesBean.doDeleteNote}" />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmDeleteNoteVar').hide()" type="button" />   
+       </h:form>         
+</p:confirmDialog>
+</html>      

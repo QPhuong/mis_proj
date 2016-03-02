@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+      
+<h:form id="docSearchForm">
+
+	<p:panelGrid styleClass="noBorderPanelGrid">
+		<p:row>
+			<p:column>
+				<h:outputText value="Expression" />
+			</p:column>
+			<p:column colspan="3">
+				<p:inputText value="#{documentSearchBean.searchCriteria.searchText}" size="40" id="searchInput"></p:inputText>
+				<p:watermark for="searchInput" value="Search with a keyword" id="watermark" />
+			</p:column>
+		</p:row>
+		<!-- <p:row>
+			<p:column>
+			</p:column>
+			<p:column style="width:20px;" colspan="3">
+				<p:selectBooleanCheckbox itemLabel="Search in file content"></p:selectBooleanCheckbox>
+			</p:column>
+		</p:row> -->
+		<p:row rendered="#{not documentSearchBean.basicSearch}">
+			<p:column>
+				<p:outputLabel value="Size from"></p:outputLabel>
+			</p:column>
+			<p:column>
+				<p:inputText value="#{documentSearchBean.searchCriteria.sizeFrom}" size="10" id="sizeFrom"/>   
+	    		<pe:keyFilter for="sizeFrom" mask="num"/>
+	    		<h:outputText value="(KB)"></h:outputText>
+			</p:column>
+			<p:column>
+				<p:outputLabel value="to"></p:outputLabel>
+			</p:column>
+			<p:column>
+				<p:inputText value="#{documentSearchBean.searchCriteria.sizeTo}" size="10" id="sizeTo"/>   
+	    		<pe:keyFilter for="sizeTo" mask="num"/>
+	    		<h:outputText value="(KB)"></h:outputText>
+			</p:column>
+		</p:row>
+		<p:row rendered="#{not documentSearchBean.basicSearch}">
+			<p:column>
+				<p:outputLabel value="Date from"></p:outputLabel>
+			</p:column>
+			<p:column>
+				<p:calendar value="#{documentSearchBean.searchCriteria.from}" showOn="button" pattern="MM/dd/yyyy" size="10"/>
+			</p:column>
+			<p:column>
+				<p:outputLabel value="to"></p:outputLabel>
+			</p:column>
+			<p:column>
+				<p:calendar value="#{documentSearchBean.searchCriteria.to}" showOn="button" pattern="MM/dd/yyyy" size="10"></p:calendar>
+			</p:column>
+		</p:row>
+		<p:row rendered="#{not documentSearchBean.basicSearch}">
+			<p:column>
+				<p:outputLabel value="User"></p:outputLabel>
+			</p:column>
+			<p:column colspan="3">
+				<p:autoComplete value="#{documentSearchBean.searchCriteria.user}" completeMethod="#{documentSearchBean.doSearchUser}" size="25" dropdown="true"
+					var="user" itemLabel="#{user.searchDisplayedName}" itemValue="#{user}" converter="#{userConverter}" forceSelection="false"
+					disabled="#{documentSearchBean.searchMyDocument}" id="user">
+				</p:autoComplete>
+			</p:column>
+		</p:row>
+		<p:row rendered="#{not documentSearchBean.basicSearch}">
+			<p:column></p:column>
+			<p:column style="width:20px;" colspan="3">
+				<p:remoteCommand name="selectMyDocument" update="user"></p:remoteCommand>
+				<p:selectBooleanCheckbox onchange="selectMyDocument()" value="#{documentSearchBean.searchMyDocument}" itemLabel="My Document"></p:selectBooleanCheckbox>
+			</p:column>
+		</p:row>
+		<p:row>
+			<p:column>
+				<p:outputLabel value="Limit results"></p:outputLabel>
+			</p:column>
+			<p:column colspan="3">
+				<p:selectOneMenu value="#{documentSearchBean.searchCriteria.limit}" effect="fade" id="limit">
+					<f:selectItem itemLabel="50 records" itemValue="50" />
+					<f:selectItem itemLabel="100 records" itemValue="100" />
+					<f:selectItem itemLabel="200 records" itemValue="200" />
+					<f:selectItem itemLabel="500 records" itemValue="500" />
+					<f:selectItem itemLabel="1000 records" itemValue="1000" />
+				</p:selectOneMenu>
+			</p:column>
+		</p:row>
+		<p:row>
+			<p:column>
+			</p:column>
+			<p:column style="width:20px;" colspan="3">
+				<p:commandLink value="Switch to advance search" actionListener="#{documentSearchBean.doSwitchSearchMode}" 
+						rendered="#{documentSearchBean.basicSearch}" update="@form" style="color:#2e6e9e;"/>
+				<p:commandLink value="Switch to basic search" actionListener="#{documentSearchBean.doSwitchSearchMode}" 
+						rendered="#{not documentSearchBean.basicSearch}" update="@form" style="color:#2e6e9e;"/>
+			</p:column>
+		</p:row>
+		<p:row>
+			<p:column></p:column>
+			<p:column colspan="3">
+				<p:commandButton value="Search" icon="ui-icon-search" actionListener="#{documentSearchBean.doSearch}"
+					update="@form @([id$=documentLstForm]) @([id$=trashLstForm])">
+				</p:commandButton>
+			</p:column>
+		</p:row>
+	</p:panelGrid>
+
+</h:form>
+
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      >
+<h:head>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>
+    	<ui:insert name="title">ISO 27001:2013 Evidence Management Home</ui:insert>
+    </title>
+    <link rel="stylesheet" href="#{request.contextPath}/css/style.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/css/icon.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/css/overrideDefault.css"/>
+    <style type="text/css">
+       
+    </style>
+</h:head>
+<h:body>
+	<ui:include src="/templates/header.xhtml" />
+	<ui:include src="/templates/idleMonitor.xhtml"/>
+	<h:form style="width:70%;margin-top: 50px;margin-left: auto;margin-right: auto;">
+		<p:growl id="growl" showDetail="true"/>
+		<p:wizard flowListener="#{installationBean.onFlowProcess}">
+	        <p:tab id="multiOrg" title="Multi Organzation">
+	            <p:panel header="Multi Organzation Setup">
+	                <p:messages />
+	                <h:panelGrid columns="2" columnClasses="label, value">
+	                    <h:outputText value="Multi Organzation Setup" />
+	                    <h:selectBooleanCheckbox value="#{installationBean.multiOrganizationSetup}" />
+	                </h:panelGrid>
+	            </p:panel>
+	        </p:tab>
+	 
+	        <p:tab id="owner" title="Owner">
+	            <p:panel header="Organization Details">
+	                <p:messages />
+	                <h:panelGrid columns="2" columnClasses="label, value">
+	                    <h:outputText value="Organization Code: " />
+	                    <p:inputText value="#{installationBean.orgOwner.code}" required="true" label="Organization Code"/>
+	 
+	                    <h:outputText value="Organization Name: " />
+	                    <p:inputText value="#{installationBean.orgOwner.name}" required="true" label="Organization Name"/>
+	 
+	                    <h:outputText value="Organization Description " />
+	                    <p:inputText value="#{installationBean.orgOwner.description}" />
+	                </h:panelGrid>
+	            </p:panel>
+	        </p:tab>
+	 
+	        <p:tab id="user" title="User">
+	            <p:panel header="Administrator Information">
+	                <p:messages />
+	                <h:panelGrid columns="2" columnClasses="label, value">
+	                    <h:outputText value="Username:" />
+	                    <p:inputText value="#{installationBean.sysAdmin.username}" required="true" label="Username"/>
+	 
+	                    <h:outputText value="Full name: " />
+	                    <p:inputText value="#{installationBean.sysAdmin.fullname}"/>
+	                    
+	                    <h:outputText value="Password: " />
+	                    <p:password value="#{installationBean.sysAdmin.password}" required="true" label="Password" id="password"/>
+	                    
+	                    <h:outputText value="User Role Code:" />
+	                    <p:inputText value="#{installationBean.sysRole.code}" required="true" label="User Role Code"/>
+	 
+	                    <h:outputText value="User Role name: " />
+	                    <p:inputText value="#{installationBean.sysRole.name}"/>
+	                </h:panelGrid>
+	            </p:panel>
+	        </p:tab>
+	 
+	 		<!-- <p:tab id="category" title="Category">
+	            <p:panel header="Root Category Information">
+	                <p:messages />
+	                <h:panelGrid columns="2" columnClasses="label, value">
+	                    <h:outputText value="Category Name:" />
+	                    <p:inputText value="#{installationBean.rootCat.name}" required="true" label="Category Name"/>
+	                </h:panelGrid>
+	            </p:panel>
+	        </p:tab> -->
+	        
+	        <p:tab id="confirm" title="Confirmation">
+	            <p:panel header="Confirmation">
+	                <h:panelGrid id="confirmation" columns="2" cellpadding="5" columnClasses="grid,grid,grid">
+	                    <h:panelGrid columns="2" columnClasses="label, value" cellpadding="5" >
+	                    	<h:outputText value="Multi Organzation Setup" />
+	                   		<h:selectBooleanCheckbox value="#{installationBean.multiOrganizationSetup}" disabled="true"/>
+	                    
+	                    	<h:outputText value="Organization Code: " />
+		                    <h:outputText value="#{installationBean.orgOwner.code}" />
+		 
+		                    <h:outputText value="Organization Name: " />
+		                    <h:outputText value="#{installationBean.orgOwner.name}" />
+		 
+		                    <h:outputText value="Organization Description " />
+		                    <h:outputText value="#{installationBean.orgOwner.description}" />
+	                    </h:panelGrid>
+	 
+	                    <h:panelGrid columns="2" columnClasses="label, value" cellpadding="5" >
+	                        <h:outputText value="Username:" />
+		                    <h:outputText value="#{installationBean.sysAdmin.username}"/>
+		 
+		                    <h:outputText value="Full name: " />
+		                    <h:outputText value="#{installationBean.sysAdmin.fullname}"/>
+		                    
+		                    <h:outputText value="User Role Code:" />
+		                    <h:outputText value="#{installationBean.sysRole.code}"/>
+		 
+		                    <h:outputText value="User Role name: " />
+		                    <h:outputText value="#{installationBean.sysRole.name}"/>
+		                    
+	                    </h:panelGrid>
+	                </h:panelGrid>
+	 
+	                <p:commandButton value="Submit" actionListener="#{installationBean.doSave}" update="@form" process="@this" ajax="true"/>
+	            </p:panel>
+	        </p:tab>
+	    </p:wizard>
+	</h:form>
+</h:body>
+
+</html>

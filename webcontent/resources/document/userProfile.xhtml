@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+
+<composite:interface>
+	<composite:attribute name="rendered" default="true"/>
+	<composite:attribute name="userValue" required="true"/>
+	<composite:attribute name="saveCompleteAction"/>
+	<composite:attribute name="cancelCompleteAction" />
+	<composite:attribute name="updateComponent" />
+</composite:interface>
+
+<composite:implementation>
+	<h:form id="userProfileForm">
+		<h:panelGroup rendered="#{cc.attrs.rendered}">
+			<p:messages severity="error"/>
+			<p:panelGrid id="userProfilePanel" styleClass="noBorderPanelGrid" style="margin-top:20px;">
+				<p:row>
+					<p:column ><p:outputLabel for="username" value="User name: " /></p:column>
+					<p:column><p:inputText id="username" size="50" value="#{cc.attrs.userValue.username}" required="true"/></p:column>
+				</p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="fullname" value="Full name: " /></p:column>
+	            	<p:column><p:inputText id="fullname" size="50" value="#{cc.attrs.userValue.fullname}"/></p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="password1" value="Password: " /></p:column>
+	            	<p:column><p:password id="password1" match="password2" required="true" size="50" value="#{cc.attrs.userValue.password}" redisplay="true"/></p:column>
+	            </p:row>
+	 			<p:row>
+	            	<p:column><p:outputLabel for="password2" value="Confirm Password: " /></p:column>
+	            	<p:column><p:password id="password2" size="50" value="#{cc.attrs.userValue.password}" required="true" redisplay="true"/></p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="email" value="Email: " /></p:column>
+	            	<p:column>
+	            		<p:inputText id="email" size="50" value="#{cc.attrs.userValue.email}"
+	            			validatorMessage="Invalid email format">
+	            			<f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+	            		</p:inputText>
+	            	</p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column></p:column>
+	            	<p:column>
+	            		<p:commandButton actionListener="#{authenticationBean.doSaveUserProfile}" value="Save" id="btnSave" update="@form #{cc.attrs.updateComponent}" process="@form"
+	            			oncomplete="#{cc.attrs.saveCompleteAction}" style="margin-right:5px;" icon="ui-icon-disk"/>
+	        			<p:commandButton actionListener="#{authenticationBean.doCancelUserProfile}" value="Cancel" process="@this"
+	            			oncomplete="#{cc.attrs.cancelCompleteAction}" icon="ui-icon-cancel"/>
+	            	</p:column>
+	            </p:row>
+	        </p:panelGrid>
+		</h:panelGroup>
+	</h:form>
+
+</composite:implementation>
+</html>

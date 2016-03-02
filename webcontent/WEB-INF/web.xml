@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+  <display-name>isoEvidenceMng</display-name>
+  
+  <!-- Mapping with servlet and url for the http requests. -->
+  <servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+	<servlet-mapping>
+	    <servlet-name>Faces Servlet</servlet-name>
+	    <url-pattern>*.jsf</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+	    <servlet-name>Faces Servlet</servlet-name>
+	    <url-pattern>*.faces</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+	    <servlet-name>Faces Servlet</servlet-name>
+	    <url-pattern>*.xhtml</url-pattern>
+	</servlet-mapping>
+  
+  <!-- Spring Context Configuration' s Path definition -->
+  <context-param>
+	  <param-name>contextConfigLocation</param-name>
+	  <param-value>
+	  	WEB-INF/spring-application-context.xml
+	  	WEB-INF/spring-application-security.xml
+	  </param-value>
+  </context-param>
+  	
+	<context-param>
+		<description>State saving method: 'client' or 'server' (=default). See JSF Specification 2.5.2</description>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>client</param-value>
+		<!-- <param-value>server</param-value> -->
+	</context-param>
+	<context-param>
+		<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+		<param-value>resources.application</param-value>
+	</context-param>
+  	<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>redmond</param-value>
+	</context-param>
+	<context-param>
+	    <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+	    <param-value>true</param-value>
+	</context-param>
+	
+	
+  <listener>
+    <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
+  </listener>
+  <!-- The Bootstrap listener to start up and shut down Spring's root WebApplicationContext. It is registered to Servlet Container -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+  </listener>
+  
+
+  	<filter>
+	  <filter-name>PrimeFaces FileUpload Filter</filter-name>
+	  <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	  <filter-name>PrimeFaces FileUpload Filter</filter-name>
+	  <servlet-name>Faces Servlet</servlet-name>
+	</filter-mapping>
+	
+	<filter>
+	  <filter-name>springSecurityFilterChain</filter-name>
+	  <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+	  <filter-name>springSecurityFilterChain</filter-name>
+	  <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<session-config>
+      <!-- Session idle timeout in min. -->
+      <session-timeout>30</session-timeout>
+    </session-config>
+    
+   <!-- Welcome Page -->
+	 <welcome-file-list>
+	  <welcome-file>faces/login.xhtml</welcome-file>
+	 </welcome-file-list>
+</web-app>

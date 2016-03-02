@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+	
+<h:form>
+	<p:panel styleClass="panelControlHeader" rendered="#{categoryPropertiesBean.selectedCategory.finalSecurity.canEditCategory}">
+		<p:commandButton value="Save" onclick="$('[id*=saveCatePropertiesBtn]').click()"
+   				update="@form @([id$=categoryTreeForm]) @([id$=categoryPropertyForm])" icon="ui-icon-disk" style="margin-left:5px;margin-right: 10px;"/>
+		<p:commandButton value="Reset" update="@form @([id$=categoryPropertyForm])" icon="ui-icon-refresh" process="@this">
+			<p:resetInput target="categoryPropertyForm" />
+		</p:commandButton>
+	</p:panel>
+</h:form>
+
+<h:panelGroup layout="block" styleClass="detailPropertiesPanel">	
+	<h:form id="categoryPropertyForm">
+		<p:commandButton actionListener="#{categoryPropertiesBean.doSaveProperties}" value="Save" style="display:none;"
+   				id="saveCatePropertiesBtn"/>
+		<p:messages for="name"/><p:messages for="code"/>
+		<p:panelGrid cellpadding="0" id="catePropertiesPanel" styleClass="noBorderPanelGrid">
+			<p:row>
+				<p:column>
+					<p:panelGrid columns="2" styleClass="noBorderPanelGrid">
+						<p:outputLabel value="Path: " />
+						<h:outputText id="path" value="#{categoryPropertiesBean.selectedCategory.path}" />
+						
+						<p:outputLabel value="Code: " for="code"/>
+						<p:inputText id="code" required="true" size="80" value="#{categoryPropertiesBean.selectedCategory.code}" 
+								rendered="#{not categoryPropertiesBean.selectedCategory.deleted}"
+								disabled="#{not categoryPropertiesBean.selectedCategory.finalSecurity.canEditCategory}"/>
+						<h:outputText value="#{categoryPropertiesBean.selectedCategory.code}" rendered="#{categoryPropertiesBean.selectedCategory.deleted}"/>
+						
+						<p:outputLabel value="Name: " for="name"/>
+						<p:inputText id="name" required="true" size="80" value="#{categoryPropertiesBean.selectedCategory.name}" 
+								rendered="#{not categoryPropertiesBean.selectedCategory.deleted}"
+								disabled="#{not categoryPropertiesBean.selectedCategory.finalSecurity.canEditCategory}"/>
+						<h:outputText value="#{categoryPropertiesBean.selectedCategory.name}" rendered="#{categoryPropertiesBean.selectedCategory.deleted}"/>		
+						
+						<p:outputLabel for="childNum" value="Sub Categories: " />
+						<h:outputText id="childNum" value="#{categoryPropertiesBean.selectedCategory.subCatNum}" />
+						<p:outputLabel for="fileNum" value="Files Num: " />
+						<h:outputText id="fileNum" value="#{categoryPropertiesBean.selectedCategory.fileNum}" />
+					</p:panelGrid>
+				</p:column>
+				<p:column style="vertical-align:top">
+					<p:panelGrid columns="2"  styleClass="noBorderPanelGrid">
+						
+						<p:outputLabel for="createdBy" value="Created By: " />
+						<p:outputLabel id="createdBy" value="#{categoryPropertiesBean.selectedCategory.createdBy.fullname}" />
+						<p:outputLabel for="createdOn" value="Created On: " />
+						<p:outputLabel id="createdOn" value="#{categoryPropertiesBean.selectedCategory.createdOn}">
+							<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" />
+						</p:outputLabel>
+						<p:outputLabel for="updatedBy" value="Updated By: " />
+						<p:outputLabel id="updatedBy" value="#{categoryPropertiesBean.selectedCategory.updatedBy.fullname}" />
+						<p:outputLabel for="updatedOn" value="Updated On: " />
+						<p:outputLabel id="updatedOn" value="#{categoryPropertiesBean.selectedCategory.updatedOn}">
+							<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" />
+						</p:outputLabel>
+					</p:panelGrid>
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column colspan="2">
+					<p:panelGrid styleClass="noBorderPanelGrid" style="margin-top:-5px;">
+						<p:row>
+							<p:column style="width:80px;"><p:outputLabel for="description" value="Description: " /></p:column>
+							<p:column>
+								<p:editor id="description" widgetVar="descriptionVar" value="#{categoryPropertiesBean.selectedCategory.description}"
+										rendered="#{not categoryPropertiesBean.selectedCategory.deleted}"
+										disabled="#{not categoryPropertiesBean.selectedCategory.finalSecurity.canEditCategory}"
+					         			controls="bold italic underline strikethrough subscript superscript | font size style | color highlight removeformat | bullets numbering | outdent indent | alignleft center alignright justify | undo redo | rule link unlink | cut copy paste pastetext | source"
+					         			height="100">
+					         	</p:editor>
+					         	<h:outputText value="#{categoryPropertiesBean.selectedCategory.description}" rendered="#{categoryPropertiesBean.selectedCategory.deleted}"/>
+							</p:column>
+			         	</p:row>
+	         		</p:panelGrid>
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column colspan="2">
+					<p:panelGrid styleClass="noBorderPanelGrid">
+						<p:row>
+							<p:column style="width:80px;"><p:outputLabel value="Templates: " /></p:column>
+							<p:column>
+								<p:remoteCommand name="reloadTempFileList" update="@([id$=tempFileLstPanel])"></p:remoteCommand>
+								<h:panelGroup layout="block" style="margin-bottom:-10px;margin-top:-15px; " id="templates">
+									<p:dataList value="#{categoryPropertiesBean.selectedCategory.lstTemplates}" var="template" 
+										rendered="#{(categoryPropertiesBean.selectedCategory.lstTemplates.size() gt 0)}"
+										type="unordered" itemType="none" emptyMessage="" styleClass="noBorderDataList">
+										<p:panelGrid columns="2" styleClass="noBorderPanelGrid" style="margin-left: -50px; ">
+											<p:commandLink value="#{template.fileName}" style="color:#2e6e9e;" onclick="$('[id*=downloadTemplateBtn]').click()">
+												<f:setPropertyActionListener value="#{template}" target="#{categoryPropertiesBean.isoDocument}" />
+											</p:commandLink>
+											<p:commandLink title="Delete" styleClass="ui-icon ui-icon-trash" action="#{categoryPropertiesBean.doDeleteTemplateFile}"
+												update="@([id$=templateLstPanel])" rendered="#{categoryPropertiesBean.selectedCategory.finalSecurity.canEditCategory}">
+									    		<f:setPropertyActionListener value="#{template}" target="#{categoryPropertiesBean.isoDocument}" />
+											</p:commandLink>
+										</p:panelGrid>
+									</p:dataList>
+									<h:panelGroup layout="block" style="margin-top:-10px; margin-bottom:-10px;" id="tempFileLstPanel" >
+					            		<p:dataList value="#{categoryPropertiesBean.lstTemporaryFile}" var="tempFile"
+					        					type="unordered" itemType="none" emptyMessage="" styleClass="noBorderDataList" >
+											<p:panelGrid columns="2" styleClass="noBorderPanelGrid" style="margin-left: -50px">
+												<p:commandLink value="#{tempFile.fileName} (temp)" style="color:#e17009" onclick="$('[id*=downloadTempTemplateBtn]').click()">
+													<f:setPropertyActionListener value="#{tempFile}" target="#{categoryPropertiesBean.temporaryFile}" />
+												</p:commandLink>
+												<p:commandLink title="Delete" styleClass="ui-icon ui-icon-trash" action="#{categoryPropertiesBean.doDeleteTemporaryFile}"
+													update="@([id$=tempFileLstPanel])" rendered="#{categoryPropertiesBean.selectedCategory.finalSecurity.canEditCategory}">
+										    			<f:setPropertyActionListener value="#{tempFile}" target="#{categoryPropertiesBean.temporaryFile}" />
+												</p:commandLink>
+											</p:panelGrid>
+										</p:dataList>
+									</h:panelGroup>
+								</h:panelGroup>
+							</p:column>
+			         	</p:row>
+	         		</p:panelGrid>
+				</p:column>
+			</p:row>
+	    </p:panelGrid>
+	</h:form>
+	
+	<h:form>
+		<p:commandButton id="downloadTemplateBtn" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);"
+	        		actionListener="#{categoryPropertiesBean.doDownloadTemplate}" style="display:none;">
+	        	<p:fileDownload value="#{categoryPropertiesBean.downloadFile}" />
+	    </p:commandButton>
+	    <p:commandButton id="downloadTempTemplateBtn" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+	        		actionListener="#{categoryPropertiesBean.doDownloadTempTemplate}" style="display:none;">
+	        	<p:fileDownload value="#{categoryPropertiesBean.downloadFile}" />
+	    </p:commandButton>
+	</h:form>
+	
+	<h:form style="margin-left:120px;" id="categoryPropertiesTemplateForm" 
+		rendered="#{categoryPropertiesBean.selectedCategory.finalSecurity.canEditCategory and (not categoryPropertiesBean.selectedCategory.deleted)}">
+		<style>
+			.templateMainCategory .ui-fileupload-buttonbar {
+			    background: transparent none;
+			    border: none;
+			}
+			.templateMainCategory .ui-fileupload-content {
+			    border: none;		    
+			}
+			.templateMainCategory .ui-fileupload-buttonbar .ui-fileupload-cancel {
+				display: none;
+			}
+			.templateMainCategory .ui-fileupload-buttonbar .ui-fileupload-upload {
+				display: none;
+			}
+			.templateMainCategory .ui-fileupload-files tr td:nth-child(1)		
+			{
+				display: none;
+			}
+			.templateMainCategory .ui-fileupload-files tr td:nth-child(2)		
+			{
+				width: 200px;
+			}
+			.templateMainCategory .ui-fileupload-files td {
+				padding: 4px;
+			}
+			.templateMainCategory .ui-fileupload-content .ui-progressbar {
+				width: 170px;
+			}
+			</style>
+		
+		<p:fileUpload styleClass="templateMainCategory" mode="advanced" oncomplete="reloadTempFileList()" 
+			fileUploadListener="#{categoryPropertiesBean.doUpload}" auto="true"/>
+	</h:form>
+	
+</h:panelGroup>
+
+
+</html>

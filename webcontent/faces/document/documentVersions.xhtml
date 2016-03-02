@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+	
+<h:form id="docVersionsForm">
+
+	<p:dataTable value="#{documentVersionsBean.docVersions}" var="version" resizableColumns="true" style="margin-top:10px;"
+		scrollable="true" styleClass="versionTable">
+	 	<p:column headerText="User" style="width:20%">  
+            <h:outputText value="#{version.user.fullname}" />  
+        </p:column>  
+        <p:column headerText="Version" style="width:50px;text-align: center">  
+        	<h:outputText value="#{version.version}" />
+        </p:column>
+  		<p:column headerText="Date" style="width:110px;">  
+            <h:outputText value="#{version.versionDate}">
+            	<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" />
+            </h:outputText>  
+        </p:column>
+        <p:column headerText="Comment"> 
+        	<h:outputText value="#{version.comment}" escape="false"/> 
+        </p:column>
+ 	</p:dataTable>
+	
+</h:form>
+
+
+</html>

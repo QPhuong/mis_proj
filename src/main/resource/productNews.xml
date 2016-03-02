@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<product>
+	<verions>
+		<version>
+			<version>1.0</version>
+			<message>Iso Document Management Released</message>
+			<releasedDate>2015-06-20 00:00:00</releasedDate><!-- yyyy-MM-dd HH:mm:ss -->
+			<author>Phuong Pham</author>
+			<newfeatures>
+				<feature></feature>
+			</newfeatures>
+			<improvefeatures>
+				<feature></feature>
+			</improvefeatures>
+		</version>
+	</verions>
+</product>

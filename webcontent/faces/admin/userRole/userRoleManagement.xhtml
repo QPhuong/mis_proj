@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/templates/layoutAdministrator.xhtml">
+	<ui:define name="adminCenter">
+		<pe:layoutPane position="north" size="50%" styleContent="overflow: hidden">
+			<ui:include src="userRoleList.xhtml"/>
+		</pe:layoutPane>
+		<pe:layoutPane position="center">
+			<ui:include src="userRoleDetail.xhtml"/>
+		</pe:layoutPane>
+	</ui:define>
+</ui:composition>
+</html>

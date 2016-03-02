@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="userProfileForm">
+		<h:panelGroup rendered="#{userBean.shownDetail}">
+		<p:messages severity="error" showIcon="true" showSummary="true"/>
+			<p:panelGrid cellpadding="5" id="userProfilePanel" styleClass="userProfilePanel">
+				<p:row>
+					<p:column style="width:150px"><p:outputLabel for="username" value="User name: " /></p:column>
+					<p:column><p:inputText id="username" size="50" value="#{userBean.selectedUser.username}" required="true"/></p:column>
+				</p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="fullname" value="Full name: " /></p:column>
+	            	<p:column><p:inputText id="fullname" size="50" value="#{userBean.selectedUser.fullname}"/></p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="password1" value="Password: " /></p:column>
+	            	<p:column><p:password id="password1" match="password2" required="true" size="50" value="#{userBean.selectedUser.password}" redisplay="true"/></p:column>
+	            </p:row>
+	 			<p:row>
+	            	<p:column><p:outputLabel for="password2" value="Confirm Password: " /></p:column>
+	            	<p:column><p:password id="password2" size="50" value="#{userBean.selectedUser.password}" required="true" redisplay="true"/></p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="active" value="Active: " /></p:column>
+	            	<p:column><p:selectBooleanCheckbox value="#{userBean.selectedUser.active}" id="active"/></p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="email" value="Email: " /></p:column>
+	            	<p:column>
+	            		<p:inputText id="email" size="50" value="#{userBean.selectedUser.email}"
+	            			validatorMessage="Invalid email format">
+	            			<!-- <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" /> -->
+	            		</p:inputText>
+	            	</p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column></p:column>
+	            	<p:column>
+	            		<p:commandButton actionListener="#{userBean.doUserDetailSave}" value="Save" update=":userLstForm @form" id="btnSave"/>
+	        			<p:commandButton value="Cancel" action="#{userBean.doUserDetailCancel}" immediate="true" update=":userLstForm @form"/>
+	            	</p:column>
+	            </p:row>
+	        </p:panelGrid>
+		</h:panelGroup>
+	</h:form>
+
+
+</html>

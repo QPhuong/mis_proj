@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+
+<composite:interface>
+	<composite:attribute name="showToolbar" default="true"/>
+	<composite:attribute name="showTable" default="true"/>
+	<composite:attribute name="oncompleteDocumentAction" />
+	<composite:attribute name="updateOtherComponentId"/>
+</composite:interface>
+
+<composite:implementation>
+	
+	<h:form id="documentLstForm" style="width: 100%;margin-left: auto;margin-right: auto;">
+		
+		<p:commandButton id="resetCheckInDialog" style="display:none">
+			<p:ajax update="@([id$=checkInDialogForm])" resetValues="true" />
+		</p:commandButton>
+		
+		<p:commandButton id="uploadBtn" oncomplete="PF('uploadDlgWidget').show()" style="display:none;"
+	            	disabled="#{not categoryTreeBean.selectCategoryNode}" update="@([id$=uploadDialog])"/>
+	            	
+        <p:commandButton id="downloadBtn" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" 
+        		actionListener="#{documentBean.doDownloadFile}" style="display:none;">
+        	<p:fileDownload value="#{documentBean.downloadFile}" />
+        </p:commandButton>
+        
+        <p:commandButton id="deleteBtn" oncomplete="PF('confirmDeleteFile').show()" update="@([id$=confirmDeleteFileDialog])" style="display:none;"/>
+        
+        <p:commandButton id="refreshBtn" actionListener="#{documentBean.doRefreshDocLst}" style="display:none;"
+        	update="@form #{cc.attrs.updateOtherComponentId}" oncomplete="#{cc.attrs.oncompleteDocumentAction}"/>
+        
+        <p:commandButton id="previewDocBtn" update="@([id$=previewLightBox])" actionListener="#{documentBean.doOpenPreviewDocument}"
+        	oncomplete="$('[id*=openPreview]').click()" style="display:none;"/>
+		
+		<p:toolbar id="docToolbar" style="margin-bottom: 5px;" rendered="#{cc.attrs.showToolbar}">
+			<f:facet name="left">
+	            <p:commandButton value="Upload" icon="ui-icon-circle-arrow-s" onclick="$('[id*=uploadBtn]').click()"
+	            	disabled="#{not (categoryTreeBean.selectCategoryNode and categoryTreeBean.selectedCategory.finalSecurity.canUploadDoc)}" />
+	            	
+	            <p:commandButton value="Download" icon="ui-icon-circle-arrow-n" onclick="$('[id*=downloadBtn]').click()"
+	            		disabled="${not (documentBean.selectedDocElement and documentBean.selectedDoc.canDownload(authenticationBean.logindUser))}" />
+	            
+	            <p:commandButton value="Delete" icon="ui-icon-trash" onclick="$('[id*=deleteBtn]').click()"
+	            		disabled="${not (documentBean.selectedDocElement and documentBean.selectedDoc.canDownload(authenticationBean.logindUser))}"/>
+	            
+	            <p:commandButton value="Refesh" icon="ui-icon-refresh" onclick="$('[id*=refreshBtn]').click()" 
+	            		disabled="#{not categoryTreeBean.selectCategoryNode}"/>
+	            
+	 		</f:facet>
+	    </p:toolbar>
+		
+		<p:contextMenu for="documentLst" id="docContextMenu" widgetVar="docContextMenuVar">
+			<p:menuitem value="Download" icon="ui-icon-circle-arrow-n" onclick="$('[id*=downloadBtn]').click()" 
+					disabled="${(not documentBean.selectedDoc.canDownload(authenticationBean.logindUser))}"
+					rendered="#{not documentBean.selectedDoc.deleted}"/>
+			
+			<p:menuitem value="Delete" icon="ui-icon-trash" onclick="$('[id*=deleteBtn]').click()" 
+					disabled="${(not documentBean.selectedDoc.canDelete(authenticationBean.logindUser))}"
+					rendered="#{not documentBean.selectedDoc.deleted}"/>
+			
+			<p:menuitem value="Preview" icon="ui-icon-preview" onclick="$('[id*=previewDocBtn]').click()" 
+					rendered="#{not documentBean.selectedDoc.deleted}"/>
+			
+			<p:menuitem value="Check out" icon="ui-icon-check-out" 
+				 	update="@form" disabled="${(not documentBean.selectedDoc.canCheckOut(authenticationBean.logindUser))}"
+					actionListener="#{documentBean.doCheckOut}" oncomplete="#{cc.attrs.oncompleteDocumentAction}"
+					rendered="#{not documentBean.selectedDoc.deleted}"/>
+				
+			<p:menuitem value="Check in" icon="ui-icon-check-in" onstart="$('[id*=resetCheckInDialog]').click()" 
+					actionListener="#{documentBean.doOpenCheckInDialog}" update="@form"
+					oncomplete="PF('checkInDialogWidget').show()" disabled="${(not documentBean.selectedDoc.canCheckIn(authenticationBean.logindUser))}"
+					rendered="#{not documentBean.selectedDoc.deleted}"/>
+					 
+			<p:menuitem value="Lock" icon="ui-icon-locked" disabled="${(not documentBean.selectedDoc.canLock(authenticationBean.logindUser))}"
+					actionListener="#{documentBean.doLocked}" oncomplete="#{cc.attrs.oncompleteDocumentAction}" update="@form"
+					rendered="#{not documentBean.selectedDoc.deleted}"/>
+				
+			<p:menuitem value="Unlock" icon="ui-icon-unlocked" disabled="${(not documentBean.selectedDoc.canUnlock(authenticationBean.logindUser))}"
+					actionListener="#{documentBean.doUnlocked}" oncomplete="#{cc.attrs.oncompleteDocumentAction}"  update="@form"/>
+		</p:contextMenu>
+		
+		<!-- <p:separator/> -->
+		
+	 	<p:dataTable value="#{documentBean.lstDocument}" var="document" selectionMode="single" resizableColumns="true" widgetVar="documentWidgetVar"
+	 				rendered="#{cc.attrs.showTable}" styleClass="documentTable"
+	 				selection="#{documentBean.selectedDoc}" rowKey="#{document.id}" id="documentLst"
+	 				filteredValue="#{documentBean.lstFilterDocument}"
+	 				scrollable="true"
+	 				>
+	 				
+		 	<p:ajax event="rowSelect" update="@([id$=docToolbar]) #{cc.attrs.updateOtherComponentId}" listener="#{documentBean.onRowSelect}"
+		 		oncomplete="#{cc.attrs.oncompleteDocumentAction}"/>
+	       	<p:ajax event="rowUnselect" update="@([id$=docToolbar]) #{cc.attrs.updateOtherComponentId}" listener="#{documentBean.onRowUnselect}"
+	       		oncomplete="#{cc.attrs.oncompleteDocumentAction}"/>
+		 	<p:ajax event="contextMenu" update="@([id$=docContextMenu]) @([id$=docToolbar])"
+		 			listener="#{documentBean.onRowSelect}" oncomplete="PF('docContextMenuVar').show();"/>
+		 	
+		 	<f:facet name="header">
+	            <p:outputPanel>
+	                <h:outputText value="Filter all fields: " />
+	                <p:inputText id="globalFilter" onkeyup="PF('documentWidgetVar').filter()" style="width:150px" 
+	                	placeholder="Enter keyword" value="#{documentBean.filterText}"/>
+	            </p:outputPanel>
+        	</f:facet>
+        
+		 	<p:column headerText="" style="width:20px;text-align: center;padding:0;" >  
+	        	<h:graphicImage url="/images/icon/lock.png" rendered="#{document.locked}" />
+	        	<h:graphicImage url="/images/icon/check_out.png" rendered="#{document.checkedOut}" />
+	        </p:column>
+		 	<p:column headerText="Document Name" sortBy="#{document.fileTitle}" filterMatchMode="contains"
+		 			filterStyle="display:none; visibility:hidden;" filterBy="#{document.fileTitle}">  
+	            <h:outputText value="#{document.fileTitle}" />  
+	        </p:column>  
+	        <p:column headerText="Type" style="width:50px;text-align: center" sortBy="#{document.extension}" filterMatchMode="contains"
+	        		filterStyle="display:none; visibility:hidden;" filterBy="#{document.extension}">  
+	        	<h:outputText value="#{document.extension}" />
+	        </p:column>
+	  		<p:column headerText="Size" style="width:50px;text-align: center" sortBy="#{document.sizeStr}" filterMatchMode="gte"
+	  				filterStyle="display:none; visibility:hidden;" filterBy="#{document.sizeStr}">  
+	            <h:outputText value="#{document.sizeStr}" />  
+	        </p:column>
+	        <p:column headerText="Version" style="width:50px;text-align: center" sortBy="#{document.latestVersion}" filterMatchMode="contains"
+	        		filterStyle="display:none; visibility:hidden;" filterBy="#{document.latestVersion}">  
+	        	<h:outputText value="#{document.latestVersion}" />
+	        </p:column>
+	        <p:column headerText="Created By" style="width:80px;text-align: center" sortBy="#{document.createdBy.username}" filterMatchMode="contains"
+	        		filterStyle="display:none; visibility:hidden;" filterBy="#{document.createdBy.username}">
+	        	<h:outputText value="#{document.createdBy.username}" title="#{document.createdBy.fullname}" />
+	        </p:column>
+	        <p:column headerText="Created On" style="width:120px;" sortBy="#{document.createdOn}" filterMatchMode="contains"
+	        		filterStyle="display:none; visibility:hidden;" filterBy="#{document.createdOn}">  
+	        	<h:outputText value="#{document.createdOn}" >
+	        		<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" />
+	        	</h:outputText>
+	        </p:column>  
+	 	</p:dataTable>
+	</h:form>
+	
+	<p:dialog id="uploadDialog" header="Upload Document" widgetVar="uploadDlgWidget" appendTo="@(body)" 
+		closable="true" height="300px" width="500px" modal="true" onHide="#{cc.attrs.oncompleteDocumentAction}">
+		<h:form id="uploadDialogForm">
+			<p:fileUpload fileUploadListener="#{documentBean.doUploadNewDocument}" mode="advanced" multiple="true"
+		           update="@([id$=documentLstForm]) @form #{cc.attrs.updateOtherComponentId}" />
+		</h:form>
+	</p:dialog>               	
+	
+	<p:confirmDialog id="confirmDeleteFileDialog" message="Are you sure to delete this file (#{documentBean.selectedDoc.fileName})?"  
+	              header="Delete File Confirmation" severity="alert" widgetVar="confirmDeleteFile" appendTo="@(body)">  
+	  <h:form id="fileDeleteConfirmForm" style="float:right">          
+	      <p:commandButton id="confirm" value="Yes" update="@([id$=documentLstForm]) #{cc.attrs.updateOtherComponentId}" oncomplete="PF('confirmDeleteFile').hide(); #{cc.attrs.oncompleteDocumentAction}"  
+	                  actionListener="#{documentBean.doDeleteDocument}" />  
+	      <p:commandButton id="decline" value="No" onclick="PF('confirmDeleteFile').hide()" type="button" style="margin-left: 5px;"/>   
+	  </h:form>         
+	</p:confirmDialog>
+	
+	<p:dialog id="checkInDialog" header="Check in document" widgetVar="checkInDialogWidget" appendTo="@(body)" 
+		closable="true" height="300px" width="600px" modal="true">
+			<style>
+			.checkInFileUpload .ui-fileupload-buttonbar {
+			    background: transparent none;
+			    border: none;
+			    display:none;
+			}
+			.checkInFileUpload .ui-fileupload-content {
+			    border: none;		    
+			}
+			.checkInFileUpload .ui-fileupload-buttonbar .ui-fileupload-cancel {
+				display: none;
+			}
+			.checkInFileUpload .ui-fileupload-upload {
+				display: none;
+			}
+			
+			.checkInFileUpload .ui-fileupload-files tr td:nth-child(1),
+			.checkInFileUpload .ui-fileupload-files tr td:nth-child(2),
+			.checkInFileUpload .ui-fileupload-files tr td:nth-child(3)  {
+				display: none;
+			}
+			
+			.checkInFileUpload .ui-fileupload-files td {
+				padding: 4px;
+			}
+			.checkInFileUpload .ui-fileupload-content .ui-progressbar {
+				width: 170px;
+			}
+			</style>
+		<h:form id="checkInDialogForm">
+			<p:panelGrid styleClass="noBorderPanelGrid" id="checkInPanel">
+				<p:row>
+					<p:column style="width: 100px;"><p:outputLabel value="Major Verion: "/></p:column>
+					<p:column><p:selectBooleanCheckbox value="#{documentBean.majorVersion}"/></p:column>
+				</p:row>
+				<p:row>
+					<p:column><p:outputLabel value="Comment: "/></p:column>
+					<p:column><p:inputTextarea id="description" rows="3" cols="70" autoResize="false" value="#{documentBean.newVersionComment}"/></p:column>
+				</p:row>
+				<p:row>
+					<p:column></p:column>
+					<p:column>
+						<p:commandButton value="Choose" icon="ui-icon-plusthick" onclick="$('[id*=checkInUpload_input]').first().click()" />
+		           	</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+					</p:column>
+					<p:column>
+						<h:outputText value="#{documentBean.tempFile.fileName}" id="checkInFileName"/>
+					</p:column>
+				</p:row>
+				<p:row >
+					<p:column>
+					</p:column>
+					<p:column>
+						<p:commandButton value="Upload" actionListener="#{documentBean.doCheckInNewDocumentVersion}" disabled="#{!documentBean.uploaledFile}"
+							update="@([id$=documentLstForm]) #{cc.attrs.updateOtherComponentId}"  id="uploadVersionBtn"
+							oncomplete="PF('checkInDialogWidget').hide();#{cc.attrs.oncompleteDocumentAction}"
+							/>
+						<p:commandButton value="Cancel" onclick="PF('checkInDialogWidget').hide()" type="button" style="margin-left:5px;"/> 
+						<p:remoteCommand name="checkInDialogRefresh" update="@([id$=uploadVersionBtn]) @([id$=checkInFileName])" />
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+		</h:form>
+		<h:form enctype="multipart/form-data" style="margin-left:205px; margin-top:-82px;">
+			<p:fileUpload styleClass="checkInFileUpload" mode="advanced" id="checkInUpload" oncomplete="checkInDialogRefresh()"
+				fileUploadListener="#{documentBean.doUploadNewDocumentVersion}" auto="true"/>
+		</h:form>
+	</p:dialog> 
+
+	<p:lightBox iframe="true" id="previewLightBox" onHide="closePreviewDocument()">
+		<style>
+			.ui-lightbox {
+				position: fixed !important;
+				top: 50% !important;
+				left: 50% !important;
+				/* bring your own prefixes */
+				transform: translate(-50%, -50%) !important;
+			}
+		</style>
+		
+		<h:form>
+			<p:remoteCommand name="closePreviewDocument" actionListener="#{documentBean.doClosePreviewDocument}"/>
+		</h:form>
+		<h:outputLink value="#" style="display:none;">
+	        <h:outputText value="Open Preview Doc" id="openPreview" />
+	    </h:outputLink>
+	    <f:facet name="inline">
+	    	<c:if test="#{documentBean.openPreviewDoc}">
+		    	<c:choose>
+		    		<c:when test="#{documentBean.selectedDoc.PDFFile}">
+				    	<pe:documentViewer value="#{documentPreviewBean.previewDocumentContent}" cache="false" height="650" width="900">
+					    	<f:param name="id" value="#{documentBean.selectedDoc.id}"></f:param>
+					    </pe:documentViewer>
+		    		</c:when>
+		    		<c:when test="#{documentBean.selectedDoc.mediaFile}">
+		    			<p:media value="#{documentPreviewBean.previewDocumentContent}" id="previewContent" height="650" width="900" player="quicktime" cache="false">
+				    		<f:param name="id" value="#{documentBean.selectedDoc.id}"></f:param>
+				    	</p:media>
+		    		</c:when>
+		    		<c:when test="#{documentBean.selectedDoc.image}">
+		    			<p:graphicImage value="#{documentPreviewBean.previewDocumentContent}" cache="false" >
+		    				<f:param name="id" value="#{documentBean.selectedDoc.id}"></f:param>
+		    			</p:graphicImage>
+		    		</c:when>
+		    		<c:otherwise>
+		    			<!-- <h:panelGroup layout="block" style="width:300px;height:100px;background-color: rgba(255, 255, 255);">
+					        <h:outputText value="Cannot open this file type"></h:outputText>
+					    </h:panelGroup> -->
+					    <p:media value="#{documentPreviewBean.previewDocumentContent}" height="650" width="900" cache="false" player="quicktime">
+					    	<f:param name="id" value="#{documentBean.selectedDoc.id}"></f:param>
+					    </p:media>
+		    		</c:otherwise>
+		    	</c:choose>
+		    </c:if>
+		    
+    	</f:facet>
+    	
+	</p:lightBox>
+	
+</composite:implementation>
+
+</html>

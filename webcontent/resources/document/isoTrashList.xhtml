@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+
+<composite:interface>
+	<composite:attribute name="showTable" default="true"/>
+	<composite:attribute name="oncompleteDocumentAction" />
+	<composite:attribute name="updateOtherComponentId"/>
+</composite:interface>
+
+<composite:implementation>
+	
+	<h:form id="trashLstForm" style="width: 100%;margin-left: auto;margin-right: auto;">
+		<h:outputText value="${(trashDomaintBean.lstTrash.size())}" style="display:none;"></h:outputText>
+		<p:contextMenu for="trashLst" id="trashContextMenu" widgetVar="trashContextMenuVar">
+			<p:menuitem value="Restore" icon="ui-icon-arrowreturnthick-1-w" actionListener="#{trashDomaintBean.doRestoreTrashItem}"
+				update="@form" disabled="#{trashDomaintBean.selectedTrash.canRestore}"/>
+			
+			<p:menuitem value="Delete Permanently" icon="ui-icon-trash" actionListener="#{trashDomaintBean.doDeleteTrashItemPermanently}"
+				update="@form" disabled="#{trashDomaintBean.selectedTrash.canDeletePermanent}"/>
+		</p:contextMenu>
+		
+	 	<p:dataTable value="#{trashDomaintBean.lstTrash}" var="trash" selectionMode="single" resizableColumns="true" 
+	 				scrollable="true" sortMode="multiple" rendered="#{cc.attrs.showTable}" styleClass="trashTable"
+	 				selection="#{trashDomaintBean.selectedTrash}" rowKey="#{trash.hashCode()}" id="trashLst" widgetVar="trashWidgetVar"
+	 				filteredValue="#{trashDomaintBean.lstFilteredTrash}">
+		 	
+		 	<p:ajax event="rowSelect" update="#{cc.attrs.updateOtherComponentId}" listener="#{trashDomaintBean.onRowSelect}"
+		 		oncomplete="#{cc.attrs.oncompleteDocumentAction}"/>
+	       	<p:ajax event="rowUnselect" update="#{cc.attrs.updateOtherComponentId}" listener="#{trashDomaintBean.onRowUnselect}"
+	       		oncomplete="#{cc.attrs.oncompleteDocumentAction}"/>
+		 	<p:ajax event="contextMenu" update=" @([id$=docToolbar])"
+		 			listener="#{documentBean.onRowSelect}" oncomplete="PF('trashContextMenuVar').show();"/>
+		 	
+		 	<f:facet name="header">
+	            <p:outputPanel>
+	                <h:outputText value="Filter all fields: " />
+	                <p:inputText id="globalFilter" onkeyup="PF('trashWidgetVar').filter()" style="width:150px" 
+	                	placeholder="Enter keyword" value="#{trashDomaintBean.filterText}"/>
+	            </p:outputPanel>
+        	</f:facet>
+        	
+		 	<p:column headerText="" style="width:20px;text-align: center;padding:0;">  
+	        	<h:graphicImage url="/images/icon/#{trash.itemIcon}.png"/>
+	        </p:column>
+		 	<p:column headerText="Name" sortBy="#{trash.name}" 
+		 			filterStyle="display:none; visibility:hidden;" filterBy="#{trash.name}" filterMatchMode="contains">  
+	            <h:outputText value="#{trash.name}" />  
+	        </p:column>  
+	        <p:column headerText="Original Location" sortBy="#{trash.originalLocation}" 
+	        		filterStyle="display:none; visibility:hidden;" filterBy="#{trash.originalLocation}" filterMatchMode="contains">  
+	        	<h:outputText value="#{trash.originalLocation}" />
+	        </p:column>
+	        <p:column headerText="Item Type" style="width:70px;text-align: center" sortBy="#{trash.itemType}"
+	        		filterStyle="display:none; visibility:hidden;" filterBy="#{trash.itemType}" filterMatchMode="contains">  
+	        	<h:outputText value="#{trash.itemType}" />
+	        </p:column>  
+	  		<p:column headerText="Date Deleted" style="width:110px;" sortBy="#{trash.dateDeleted}"
+	  				filterStyle="display:none; visibility:hidden;" filterBy="#{trash.dateDeleted}" filterMatchMode="contains">  
+	            <h:outputText value="#{trash.dateDeleted}">
+	            	<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" />
+	            </h:outputText>  
+	        </p:column>
+	        <p:column headerText="Deleted By" style="width:80px;" sortBy="#{trash.deletedBy.username}"
+	        		filterStyle="display:none; visibility:hidden;" filterBy="#{trash.deletedBy.username}" filterMatchMode="contains">  
+	        	<h:outputText value="#{trash.deletedBy.username}" title="#{trash.deletedBy.fullname}"/>
+	        </p:column>
+	        <p:column headerText="Date Modified" style="width:110px;text-align: center" sortBy="#{trash.dateModified}"
+	        		filterStyle="display:none; visibility:hidden;" filterBy="#{trash.dateModified}" filterMatchMode="contains">
+	        	<h:outputText value="#{trash.dateModified}">
+	        		<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" />
+	        	</h:outputText>
+	        </p:column>
+	 	</p:dataTable>
+	</h:form>
+	
+</composite:implementation>
+
+</html>

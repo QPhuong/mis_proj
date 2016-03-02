@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+	
+	<h:form id="catTypeDetailForm">
+		<h:panelGroup rendered="#{mainCategoryTypeBean.shownDetail}">
+			<p:messages id="messages" autoUpdate="false" severity="error"/>
+			<p:panelGrid cellpadding="5" id="catTypeDetailPanel" styleClass="noBorderPanelGrid">
+				<p:row>
+					<p:column style="width:200px"><p:outputLabel for="code" value="Category Type code: " /></p:column>
+					<p:column><p:inputText id="code" size="80" value="#{mainCategoryTypeBean.selectedCategoryType.code}" required="true"/></p:column>
+				</p:row>
+				<p:row>
+					<p:column style="width:200px"><p:outputLabel for="name" value="Category Type name: " /></p:column>
+					<p:column><p:inputText id="name" size="80" value="#{mainCategoryTypeBean.selectedCategoryType.name}" required="true"/></p:column>
+				</p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="description" value="Description: " /></p:column>
+	            	<p:column>
+	            		<p:inputTextarea id="description" rows="5" cols="77" autoResize="false" value="#{mainCategoryTypeBean.selectedCategoryType.description}"/>
+	            	</p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column></p:column>
+	            	<p:column>
+	            		<p:commandButton actionListener="#{mainCategoryTypeBean.doCategoryDetailSave}" value="Save" update="@([id$=catTypeLstForm]) @form"/>
+	        			<p:commandButton value="Cancel" action="#{mainCategoryTypeBean.doCategoryTypeDetailCancel}" immediate="true" update="@([id$=catTypeLstForm]) @form"/>
+	            	</p:column>
+	            </p:row>
+	        </p:panelGrid>
+	        
+		</h:panelGroup>
+	</h:form>
+
+
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:form id="categorySecurityForm" style="margin-top:10px;">
+	<p:panel styleClass="panelControlHeader">
+		<p:commandButton actionListener="#{categorySecurityBean.doSaveAllCategorySecurity}" ajax="true" 
+      		value="Save All" update="@form" style="margin-right:5px;" icon="ui-icon-disk"/>
+		<p:commandButton value="Reset" actionListener="#{categorySecurityBean.doResetAllCategorySecurity}" 
+			ajax="true" update="@form" icon="ui-icon-refresh"/>
+	</p:panel>
+	
+	<p:contextMenu for="securityTable" id="cateSecurityContextMenu" widgetVar="cateSecurityContextMenuVar">
+		<p:menuitem value="Delete" icon="ui-icon-trash" oncomplete="PF('confirmationDeleteCategorySecurity').show()" ajax="true" 
+	            	update="@([id$=confirmDeleteCategorySecurityDialog])" />
+		
+		<p:menuitem value="Apply to all sub categories" icon="ui-icon-disk" oncomplete="PF('confirmApplySecurityForAllSubCategory').show()" ajax="true" 
+	            	update="@([id$=confirmApplySecurityForAllSubCategoryDialog])"/>  
+	            		            	
+	    <p:menuitem value="Inherit Rights" icon="ui-icon-disk" oncomplete="PF('confirmInheritCategorySecurity').show()" ajax="true" 
+	            	update="@([id$=confirmInheritSecurityDialog])" rendered="${(not empty categorySecurityBean.selectedSecurity.orgUnit)}"/>
+	    
+	    <p:menuitem value="Apply to all sub unit" icon="ui-icon-disk" oncomplete="PF('confirmAllyAllSubCategorySecurity').show()" ajax="true" 
+	            	update="@([id$=confirmApplyAllSubCategorySecurityDialog])" rendered="${(not empty categorySecurityBean.selectedSecurity.orgUnit)}"/>  
+	</p:contextMenu>
+	
+	<p:messages severity="error" autoUpdate="false" />
+	<p:panelGrid styleClass="securityEntityPanel" style="margin-bottom: 5px;">
+		<p:row>
+			<p:column><h:outputText value="Add Organization Unit"/></p:column>
+			<p:column>
+				<p:autoComplete value="#{categorySecurityBean.selectedOrgUnit}" completeMethod="#{categorySecurityBean.doSearchOrganizationUnit}" size="50" dropdown="true"
+					var="orgUnit" itemLabel="#{orgUnit.name}" itemValue="#{orgUnit}" converter="#{organizationUnitConverter}" forceSelection="false">
+						<p:ajax event="itemSelect" update="addOrgUnitBtn, addAllSubOrgUnitBtn, addInheritOrgUnitBtn" />
+						<p:ajax event="change" update="addOrgUnitBtn, addAllSubOrgUnitBtn, addInheritOrgUnitBtn" />
+				</p:autoComplete>				
+			</p:column>
+			<p:column>
+				<p:commandButton value="Add" id="addOrgUnitBtn" icon="ui-icon-plusthick" 
+					actionListener="#{categorySecurityBean.doAddNewCategorySecurity}" update="@form"
+					style="margin-left:20px;" disabled="#{(empty categorySecurityBean.selectedOrgUnit)}"/>
+				<p:commandButton value="Add all sub unit" id="addAllSubOrgUnitBtn" icon="ui-icon-plusthick" 
+					actionListener="#{categorySecurityBean.doAddAllSubOrgUnitCategorySecurity}" 
+					update="@form" style="margin-left:5px;" disabled="#{empty categorySecurityBean.selectedOrgUnit}"/>
+				<p:commandButton value="Add Inherit Rights" id="addInheritOrgUnitBtn" icon="ui-icon-plusthick" 
+					actionListener="#{categorySecurityBean.doAddCategorySecurityInherit}" 
+					update="@form" style="margin-left:5px;" disabled="#{empty categorySecurityBean.selectedOrgUnit}"/>
+			</p:column>
+		</p:row>
+		<p:row>
+			<p:column><h:outputText value="Add User"/></p:column>
+			<p:column>
+				<p:autoComplete value="#{categorySecurityBean.selectedUser}" completeMethod="#{categorySecurityBean.doSearchUser}" size="50" dropdown="true"
+					var="user" itemLabel="#{user.searchDisplayedName}" itemValue="#{user}" converter="#{userConverter}" forceSelection="false">
+					<p:ajax event="itemSelect" update="addUserBtn" />
+					<p:ajax event="change" update="addUserBtn"/>
+				</p:autoComplete>				
+			</p:column>
+			<p:column>
+				<p:commandButton value="Add" id="addUserBtn" icon="ui-icon-plusthick" 
+					actionListener="#{categorySecurityBean.doAddNewCategorySecurity}" update="@form"
+					style="margin-left:20px;" disabled="#{(empty categorySecurityBean.selectedUser)}"/>
+			</p:column>
+		</p:row>
+	</p:panelGrid>
+    
+	<p:dataTable value="#{categorySecurityBean.securityLst}" var="security" resizableColumns="true" scrollable="true" styleClass="securityTable"
+		rowKey="#{security.hashCode()}" id="securityTable" selectionMode="single" selection="#{categorySecurityBean.selectedSecurity}">
+		
+		<p:ajax event="rowSelect" update="@([id$=cateSecurityContextMenu])"  />
+		<p:ajax event="contextMenu" update="@([id$=cateSecurityContextMenu])" oncomplete="PF('cateSecurityContextMenuVar').show();" />
+		
+		<p:column headerText="" style="width:20px;text-align: center; vertical-align: middle;white-space: normal;">  
+			<h:graphicImage url="/images/icon/user.png" rendered="#{not empty security.user}"/>
+			<h:graphicImage url="/images/icon/user_group.png" rendered="#{not empty security.orgUnit}"/>
+		</p:column>
+		<p:column headerText="Entity">  
+			<h:outputText value="#{security.orgUnit.name}" rendered="#{not empty security.orgUnit}"/>
+			<h:outputText value="#{security.user.fullname}" rendered="#{not empty security.user}"/>
+		</p:column>
+		<p:column headerText="View Category" style="width:60px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canViewCategory}" />
+		</p:column>
+		<p:column headerText="Add Category" style="width:60px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canAddCategory}" />
+		</p:column>
+		<p:column headerText="Edit Category" style="width:60px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canEditCategory}" />
+		</p:column>
+		<p:column headerText="Move Category" style="width:60px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canMoveCategory}" />
+		</p:column>
+		<p:column headerText="Delete Category" style="width:60px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canDeleteCategory}" />
+		</p:column>
+		<p:column headerText="Setup Security" style="width:60px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canSetupSecurity}" />
+		</p:column>
+		<p:column headerText="Upload Doc" style="width:60px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canUploadDoc}" />
+		</p:column>
+	</p:dataTable>
+	
+	<script>
+	$(document).ready(function() {
+		$('[id$=categorySecurityForm]').on("keyup keypress", function(e) {
+  			var code = e.keyCode || e.which; 
+  			if (code  == 13) {               
+    			e.preventDefault();
+    			return false;
+  			}
+		});
+	});
+	</script>
+	
+</h:form>
+
+<p:confirmDialog id="confirmDeleteCategorySecurityDialog" message="Are you sure to delete this category security?"  
+              header="Delete Category Security" severity="alert" widgetVar="confirmationDeleteCategorySecurity" appendTo="@(body)">  
+      <h:form id="catSecurityDeleteFrm" style="float:right">
+      <p:commandButton id="confirm" value="Yes" update="@([id$=categorySecurityForm])" oncomplete="PF('confirmationDeleteCategorySecurity').hide()"  
+                  actionListener="#{categorySecurityBean.doDeleteCategorySecurity}" />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmationDeleteCategorySecurity').hide()" type="button"/>   
+       </h:form>         
+</p:confirmDialog>
+
+<p:confirmDialog id="confirmInheritSecurityDialog" message="Are you sure to inherit the security from higher level?"  
+              header="Inherit Category Security" severity="alert" widgetVar="confirmInheritCategorySecurity" appendTo="@(body)">  
+      <h:form style="float:right">
+      <p:commandButton id="confirm" value="Yes" update="@([id$=categorySecurityForm])" oncomplete="PF('confirmInheritCategorySecurity').hide()"  
+                  actionListener="#{categorySecurityBean.doApplyInheritSecurityFromParent}" />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmInheritCategorySecurity').hide()" type="button"/>   
+       </h:form>         
+</p:confirmDialog>
+
+<p:confirmDialog id="confirmApplyAllSubCategorySecurityDialog" message="Are you sure to apply this category security to all sub organization unit?"  
+              header="Apply Category Security to sub organization unit" severity="alert" widgetVar="confirmAllyAllSubCategorySecurity" appendTo="@(body)">  
+      <h:form style="float:right">
+      <p:commandButton id="confirm" value="Yes" update="@([id$=categorySecurityForm])" oncomplete="PF('confirmAllyAllSubCategorySecurity').hide()"  
+                  actionListener="#{categorySecurityBean.doApplyToAllSubOrgUnit}" />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmAllyAllSubCategorySecurity').hide()" type="button"/>   
+       </h:form>         
+</p:confirmDialog>
+
+<p:confirmDialog id="confirmApplySecurityForAllSubCategoryDialog" message="Are you sure to apply this category security to all sub categories?"  
+              header="Apply Category Security to sub categories" severity="alert" widgetVar="confirmApplySecurityForAllSubCategory" appendTo="@(body)">  
+      <h:form style="float:right">
+      <p:commandButton id="confirm" value="Yes" update="@([id$=categorySecurityForm]), @([id$=categoryTreeForm])" oncomplete="PF('confirmApplySecurityForAllSubCategory').hide()"  
+                  actionListener="#{categorySecurityBean.doApplyToAllSubCategory}" />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmApplySecurityForAllSubCategory').hide()" type="button"/>   
+       </h:form>         
+</p:confirmDialog>
+
+</html>

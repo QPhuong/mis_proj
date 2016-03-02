@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+	
+<h:form id="docPropertyForm">
+	<p:panel styleClass="panelControlHeader" rendered="#{(documentPropertiesBean.selectedDoc.canEdit(authenticationBean.logindUser))}">
+		<p:commandButton actionListener="#{documentPropertiesBean.doSaveProperties}" value="Save" resetValues="true" 
+   				update="@form" id="saveBtn" icon="ui-icon-disk" style="margin-left:5px;margin-right: 10px;"/>
+		<p:commandButton value="Reset" update="@form @([id$=docPropertyForm])" icon="ui-icon-refresh" process="@this">
+			<p:resetInput target="docPropertyForm" />
+		</p:commandButton>
+		<p:outputLabel value="Version Comment " style="margin-left: 20px;margin-right:5px;"/>
+		<p:inputText size="80" value="#{documentPropertiesBean.versionComment}"/>
+	</p:panel>
+
+	<h:panelGroup layout="block" styleClass="detailPropertiesPanel">
+		<p:panelGrid cellpadding="0" id="docPropertiesPanel" styleClass="noBorderPanelGrid">
+			<p:row>
+				<p:column>
+					<p:panelGrid columns="2" styleClass="noBorderPanelGrid">
+						<p:outputLabel value="File Name: " for="fileTitle"/>
+						<h:outputText value="#{documentPropertiesBean.selectedDoc.fileName}" required="true" id="fileTitle"/>
+						<p:outputLabel for="description" value="Description: " />
+						<p:inputTextarea id="description" rows="3" cols="67" autoResize="false" value="#{documentPropertiesBean.selectedDoc.description}"
+							disabled="#{(not documentPropertiesBean.selectedDoc.canEdit(authenticationBean.logindUser))}"/>
+						<h:outputText value="File Size: " />
+						<h:outputText value="#{documentPropertiesBean.selectedDoc.sizeStr}"/>
+						<h:outputText value="File Version: " />
+						<h:outputText value="#{documentPropertiesBean.selectedDoc.latestVersion}"/>
+						
+						<h:outputText value="Main Category: "></h:outputText>
+						<h:outputLink value="../document/document.xhtml" style="color:#2e6e9e;">
+							<h:outputText value="#{documentPropertiesBean.selectedDoc.category.name}" ></h:outputText>
+							<f:param name="categoryId" value="#{documentPropertiesBean.selectedDoc.category.id}"></f:param>
+						</h:outputLink>
+						
+						<h:outputText value="Additional Categories:"/>
+						
+						<p:commandLink title="Add" styleClass="ui-icon ui-icon-plusthick" actionListener="#{documentPropertiesBean.doOpenAdditionalCategoryDialog}"
+							update="@([id$=additionalCategoryDialog])" oncomplete="PF('additionalCategoryDialogVar').show()" 
+							rendered="#{(documentPropertiesBean.selectedDoc.canEdit(authenticationBean.logindUser))}">
+						</p:commandLink>
+						<h:outputText rendered="#{(documentPropertiesBean.selectedDoc.canEdit(authenticationBean.logindUser))}"></h:outputText>
+						
+						<h:panelGroup layout="block" style="margin-bottom:-10px;margin-top:-15px; " id="additionalCategoriesPanel">
+							<p:dataList value="#{documentPropertiesBean.selectedDoc.additionalCategories}" var="category" 
+								rendered="#{(documentPropertiesBean.selectedDoc.additionalCategories.size() gt 0)}"
+								type="unordered" itemType="none" emptyMessage="" styleClass="noBorderDataList">
+								
+								<p:panelGrid columns="2" styleClass="noBorderPanelGrid" style="margin-left: -50px;">
+									<h:outputLink value="../document/document.xhtml" style="color:#2e6e9e;">
+										<h:outputText value="#{category.name}" ></h:outputText>
+										<f:param name="categoryId" value="#{category.id}"></f:param>
+									</h:outputLink>
+									<p:commandLink title="Delete" styleClass="ui-icon ui-icon-trash" action="#{documentPropertiesBean.doDeleteCategory}"
+										update="@([id$=additionalCategoriesPanel])" process="@this" rendered="#{(documentPropertiesBean.selectedDoc.canEdit(authenticationBean.logindUser))}">
+										<f:setPropertyActionListener value="#{category}" target="#{documentPropertiesBean.additionalCategory}" />
+									</p:commandLink>
+								</p:panelGrid>
+	
+							</p:dataList>
+						</h:panelGroup>
+						
+					</p:panelGrid>
+				</p:column>
+				<p:column style="vertical-align:top" >
+					<p:panelGrid columns="2" styleClass="noBorderPanelGrid">
+						<h:outputText value="Created By: " />
+						<h:outputText id="createdBy" value="#{documentPropertiesBean.selectedDoc.createdBy.fullname}" />
+						<h:outputText value="Created On: " />
+						<h:outputText id="createdOn" value="#{documentPropertiesBean.selectedDoc.createdOn}">
+							<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" />
+						</h:outputText>
+						<h:outputText value="Updated By: " />
+						<h:outputText id="updatedBy" value="#{documentPropertiesBean.selectedDoc.updatedBy.fullname}" />
+						<h:outputText value="Updated On: " />
+						<h:outputText id="updatedOn" value="#{documentPropertiesBean.selectedDoc.updatedOn}">
+							<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" />
+						</h:outputText>
+						<h:outputText value="Published By: " />
+						<h:outputText id="publishedBy" value="" />
+						<h:outputText value="Published On: " />
+						<h:outputText id="publishedOn" value="" />
+					</p:panelGrid>
+				</p:column>
+			</p:row>
+	    </p:panelGrid>
+	</h:panelGroup>
+</h:form>
+
+<p:dialog id="additionalCategoryDialog" header="Add additional category" widgetVar="additionalCategoryDialogVar" appendTo="@(body)"
+		modal="true" showEffect="drop" hideEffect="drop" onShow="removeDuplicateDialogs(this.id)" width="500" height="600">
+	<h:form id="additionalCategoryForm">
+		<p:scrollPanel mode="native" style="width:480px;height:540px">
+		<p:tree value="#{documentPropertiesBean.root}" var="node" id="categories" selectionMode="single"
+				selection="#{documentPropertiesBean.selectedNode}" dynamic="true" style="width:100%; height:650px;">
+		    <p:ajax event="select" update="@form" listener="#{documentPropertiesBean.onNodeSelect}"/>
+			<p:ajax event="unselect" update="@form" listener="#{documentPropertiesBean.onNodeUnSelect}"/>
+		    <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+		    	<h:outputText value="#{node.name}" />
+		    </p:treeNode>
+		</p:tree>
+		</p:scrollPanel>
+		<h:panelGroup style="margin-left:auto; margin-right:auto;margin-top:5px;vertical-align: center;width:150px;" layout="block">
+			<p:commandButton id="confirm" value="Add" update="@([id$=docPropertyForm])" oncomplete="PF('additionalCategoryDialogVar').hide()" icon="ui-icon-disk"
+	                  actionListener="#{documentPropertiesBean.doAddCategory}" style="margin-right:5px;" disabled="${(empty documentPropertiesBean.additionalCategory)}"/>  
+		    <p:commandButton id="decline" value="Cancel" onclick="PF('additionalCategoryDialogVar').hide()" type="button" icon="ui-icon-cancel"/>
+		</h:panelGroup>  
+	</h:form>
+</p:dialog>
+
+</html>

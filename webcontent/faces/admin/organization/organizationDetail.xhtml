@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+	
+	<h:form id="orgDetailForm">
+		
+		<h:panelGroup rendered="#{orgMasterBean.shownDetail}">
+			<p:messages id="messages" autoUpdate="false" severity="error"/>
+			<p:panelGrid cellpadding="5" id="orgDetailPanel" styleClass="orgDetailPanel">
+				<p:row>
+					<p:column style="width:200px"><p:outputLabel for="code" value="Organization code: " /></p:column>
+					<p:column><p:inputText id="code" size="80" value="#{orgMasterBean.selectedOrg.code}" required="true"/></p:column>
+				</p:row>
+				<p:row>
+					<p:column style="width:200px"><p:outputLabel for="name" value="Organization name: " /></p:column>
+					<p:column><p:inputText id="name" size="80" value="#{orgMasterBean.selectedOrg.name}" required="true"/></p:column>
+				</p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="description" value="Description: " /></p:column>
+	            	<p:column>
+	            		<p:inputTextarea id="description" rows="5" cols="77" autoResize="false" value="#{orgMasterBean.selectedOrg.description}"/>
+	            	</p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="active" value="Active: " /></p:column>
+	            	<p:column><p:selectBooleanCheckbox value="#{orgMasterBean.selectedOrg.active}" id="active"/></p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="ownerOrganization" value="System Organization " /></p:column>
+	            	<p:column><p:selectBooleanCheckbox value="#{orgMasterBean.selectedOrg.ownerOrganization}" id="ownerOrganization"/></p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column></p:column>
+	            	<p:column>
+	            		<p:commandButton actionListener="#{orgMasterBean.doOrgDetailSave}" value="Save" update=":orgLstForm @form"/>
+	        			<p:commandButton value="Cancel" action="#{orgMasterBean.doOrgDetailCancel}" immediate="true" update=":orgLstForm @form"/>
+	            	</p:column>
+	            </p:row>
+	        </p:panelGrid>
+	        
+		</h:panelGroup>
+	</h:form>
+
+
+</html>

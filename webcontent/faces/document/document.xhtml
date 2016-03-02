@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:document="http://java.sun.com/jsf/composite/document">
+
+<ui:composition template="/templates/layout.xhtml">
+<ui:define name="center">
+
+<script>
+	var siteFunctions = {
+		    //patch to fix a problem that the context menu disappears after update
+		    //delay the show to occure after the update 
+		    patchContextMenuShow: function() {
+		        'use strict';
+		        
+		        var protShow = PrimeFaces.widget.ContextMenu.prototype.show;
+		        siteFunctions.patchContextMenuShow.lastEvent = null;
+		        PrimeFaces.widget.ContextMenu.prototype.show = function(e) {
+		            var ret;
+		            if (e) {
+		                siteFunctions.patchContextMenuShow.lastEvent = e;
+		                siteFunctions.patchContextMenuShow.lastEventArg = arguments;
+		                siteFunctions.patchContextMenuShow.lastEventContext = this;
+		            } else if (siteFunctions.patchContextMenuShow.lastEvent) {
+		                ret = protShow.apply(siteFunctions.patchContextMenuShow.lastEventContext, siteFunctions.patchContextMenuShow.lastEventArg);
+		                siteFunctions.patchContextMenuShow.lastEvent = null;
+		            }
+		            return ret;
+		        };
+		    }
+		};
+		$(document).ready(function() {
+		    'use strict';
+		    try {
+		        siteFunctions.patchContextMenuShow();
+		    } catch (e) {
+		        console.error(e);
+		    }
+		});
+</script>
+<style>
+.ui-layout-north, .ui-layout-south, .ui-layout-center, .ui-layout-west, .ui-layout-east {
+	z-index: auto !important;
+} 
+
+.docListLayout {
+	overflow: hidden;
+}
+
+.detailLayout {
+	overflow: hidden;
+}
+
+</style>
+<pe:layoutPane position="west" size="380" resizable="true" minWidth="355">
+	<ui:include src="categoriesTree.xhtml"/>
+</pe:layoutPane>
+
+<pe:layoutPane position="center" >
+	<pe:layoutPane position="center" styleContent="" styleClassContent="docListLayout">
+		<h:form>
+			<p:remoteCommand name="refreshDocumentPage" actionListener="#{categoryDetailLayoutBean.doRefresh}" 
+				update="@([id$=categoryTreeForm]) @([id$=documentLstForm]) @(.updatedPanel)"/>
+		</h:form>
+		<h:panelGroup id="docListPanel" layout="block">			
+			<!-- <ui:include src="documentList.xhtml"/> -->
+			<document:isoDocumentList  oncompleteDocumentAction="refreshDocumentPage()">
+			</document:isoDocumentList>
+		</h:panelGroup>		
+	</pe:layoutPane>
+
+	<pe:layoutPane position="south" size="50%" closable="true" styleClassContent="detailLayout">
+		<h:panelGroup layout="block" id="mainDetailPanel" styleClass="updatedPanel">
+			
+			<p:tabView activeIndex="#{categoryDetailLayoutBean.activeCategoryDetailTabIndex}" id="cateogryTab" cache="true" 
+				rendered="#{categoryDetailLayoutBean.renderCategoryDetailMainTab}" scrollable="true">
+				<p:ajax event="tabChange" update="@(.updatedPanel)" listener="#{categoryDetailLayoutBean.onCategoryTabChange}"/>
+				<p:tab title="Category Properties" />
+				<p:tab title="Category Ext. Properties"/>
+				<p:tab title="Category Security" rendered="#{categoryDetailLayoutBean.renderCategorySecurityTab}" />
+				<p:tab title="Category Histories"></p:tab>
+			</p:tabView>
+			
+			<h:panelGroup layout="block" rendered="#{categoryDetailLayoutBean.renderCategoryPropertiesTabContent}">
+				<ui:include src="categoryProperties.xhtml"/>
+			</h:panelGroup>
+			<h:panelGroup layout="block" rendered="#{categoryDetailLayoutBean.renderCategoryExtPropertiesTabContent}">
+				<ui:include src="categoryExtProperties.xhtml"/>
+			</h:panelGroup>
+			<h:panelGroup layout="block" rendered="#{categoryDetailLayoutBean.renderCategorySecurityTabContent}">
+				<ui:include src="categorySecurity.xhtml"/>
+			</h:panelGroup>
+			<h:panelGroup layout="block" rendered="#{categoryDetailLayoutBean.renderCategoryHistoryTabContent}">
+				<ui:include src="categoryHistories.xhtml"/>
+			</h:panelGroup>
+			
+			<p:tabView activeIndex="#{categoryDetailLayoutBean.activeDocDetailTabIndex}" id="docDetailTab" cache="true" scrollable="true"
+				rendered="#{categoryDetailLayoutBean.renderDocumentDetailMainTab}">
+				<p:ajax event="tabChange" update=":mainDetailPanel" listener="#{categoryDetailLayoutBean.onDocumentTabChange}"/>
+				<p:tab title="Document Properties">
+				</p:tab>
+				<p:tab title="Document Ext. Properties"></p:tab>
+				<p:tab title="Document Notes"></p:tab>
+				<p:tab title="Document Security" rendered="#{categoryDetailLayoutBean.renderDocSecurityTab}"></p:tab>
+				<p:tab title="Document Versions"></p:tab>
+				<p:tab title="Document Histories"></p:tab>
+			</p:tabView>
+			
+			<h:panelGroup layout="block" rendered="#{categoryDetailLayoutBean.renderDocPropertiesTabContent}">
+				<ui:include src="documentProperties.xhtml"/>
+			</h:panelGroup>
+			<h:panelGroup layout="block" rendered="#{categoryDetailLayoutBean.renderDocExtPropertiesTabContent}">
+				<ui:include src="documentExtProperties.xhtml"/>
+			</h:panelGroup>
+			<h:panelGroup layout="block" rendered="#{categoryDetailLayoutBean.renderDocHistoriesTabContent}">
+				<ui:include src="documentHistories.xhtml"/>
+			</h:panelGroup>
+			<h:panelGroup layout="block" rendered="#{categoryDetailLayoutBean.renderDocVersionsTabContent}">
+				<ui:include src="documentVersions.xhtml"/>
+			</h:panelGroup>
+			<h:panelGroup layout="block" rendered="#{categoryDetailLayoutBean.renderDocNotesTabContent}">
+				<ui:include src="documentNotes.xhtml"/>
+			</h:panelGroup>
+			<h:panelGroup layout="block" rendered="#{categoryDetailLayoutBean.renderDocSecurityTabContent}">
+				<ui:include src="documentSecurity.xhtml"/>
+			</h:panelGroup>
+			
+		</h:panelGroup>
+	</pe:layoutPane>
+
+</pe:layoutPane>
+</ui:define>
+</ui:composition>
+
+</html>

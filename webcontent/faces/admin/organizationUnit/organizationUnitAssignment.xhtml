@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="userAssignmentForm" styleClass="userAssignmentClass">
+		<h:panelGroup styleClass="userPickListPanel">
+			<p:pickList id="userPickList" value="#{orgHierachyBean.userList}" var="user" effect="bounce" styleClass="userPickList" style="margin-top:5px;"
+                itemValue="#{user}" itemLabel="#{user.fullname} (#{user.username})" showSourceControls="true" showTargetControls="true" showCheckbox="true"
+                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="#{userConverter}">
+            	
+            	<f:facet name="sourceCaption">Available User</f:facet>
+        		<f:facet name="targetCaption">Assigned User</f:facet>
+	            
+		        <p:column style="width:85%;">
+		            <h:outputText value="#{user.fullname} (#{user.username})"/>
+		        </p:column>
+            </p:pickList>
+            <div style="margin-left:auto; margin-right:auto;width: 120px;margin-top:5px;">
+	            <p:commandButton actionListener="#{orgHierachyBean.doSaveUserAssignment}" ajax="true" 
+	            	value="Save" update="@form" style="margin-right:5px;"/>
+	    		<p:commandButton value="Reset" actionListener="#{orgHierachyBean.reloadUserAssigntList}" ajax="true" update="@form"/>
+            </div>
+		</h:panelGroup>
+	</h:form>
+
+
+</html>

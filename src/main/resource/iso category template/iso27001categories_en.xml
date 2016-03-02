@@ -1,0 +1,175 @@
+<category>
+	<code></code>
+	<name>ISO 27001:2013 Documents</name>
+	<description></description>
+	<subcategories>
+		<category>
+			<code>0</code>
+			<name>00 Procedure for Document and Record Control</name>
+			<description></description>
+		</category>
+		<category>
+			<code>1</code>
+			<name>01 Project Plan</name>
+			<description></description>
+		</category>
+		<category>
+			<code>2</code>
+			<name>02 Procedure for Identification of Requirements</name>
+			<description></description>
+		</category>
+		<category>
+			<code>3</code>
+			<name>03 ISMS Scope Document</name>
+			<description>This document is usually rather short, and written at the beginning of the ISO 27001 
+implementation. Normally, it is a stand-alone document, although it can be merged into an 
+Information security policy</description>
+		</category>
+		<category>
+			<code>4</code>
+			<name>04 Information Security Policy</name>
+			<description>Information security policy is usually a short, top-level document describing the main purpose 
+of the ISMS. Objectives for the ISMS are usually a stand-alone document, but they can also 
+be merged into the Information security policy. Unlike the ISO 27001 2005 revision, there is 
+no more need for both ISMS Policy and Information security policy, only one Information 
+security policy is needed.</description>
+		</category>
+		<category>
+			<code>5</code>
+			<name>05 Risk Assessment and Risk Treatment Methodology</name>
+			<description>Risk assessment and treatment methodology is usually a document of 4 to 5 pages, and it 
+should be written before the risk assessment and risk treatment are performed. The Risk 
+assessment and treatment report has to be written after the risk assessment and risk 
+treatment are performed, and it summarizes all the results.</description>
+		</category>
+		<category>
+			<code>6</code>
+			<name>06 Statement of Applicability</name>
+			<description></description>
+		</category>
+		<category>
+			<code>7</code>
+			<name>07 Risk Treatment Plan</name>
+			<description></description>
+		</category>
+		<category>
+			<code>8</code>
+			<name>08 Annex A</name>
+			<description></description>
+			<subcategories>
+				<category>
+					<code>A.5</code>
+					<name>A.5 Information security policies</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.6</code>
+					<name>A.6 Organization of information security</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.7</code>
+					<name>A.7 Human resource security</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.8</code>
+					<name>A.8 Asset management</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.9</code>
+					<name>A.9 Access control</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.10</code>
+					<name>A.10 Cryptography</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.11</code>
+					<name>A.11 Physical and environmental security</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.12</code>
+					<name>A.12 Operations security</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.13</code>
+					<name>A.13 Communications security</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.14</code>
+					<name>A.14 System acquisition, development and maintenance</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.15</code>
+					<name>A.15 Supplier relationships</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.16</code>
+					<name>A.16 Information security incident management</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.17</code>
+					<name>A.17 Business Continuity</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+				<category>
+					<code>A.18</code>
+					<name>A.18 Compliance</name>
+					<description></description>
+					<subcategories></subcategories>
+				</category>
+			</subcategories>
+		</category>
+		<category>
+			<code>9</code>
+			<name>09 Training and Awareness Plan</name>
+			<description></description>
+			<subcategories>
+			</subcategories>
+		</category>
+		<category>
+			<code>10</code>
+			<name>10 Procedure for Internal Audit</name>
+			<description></description>
+			<subcategories>
+			</subcategories>
+		</category>
+		<category>
+			<code>11</code>
+			<name>11 Management Review Minutes</name>
+			<description></description>
+			<subcategories>
+			</subcategories>
+		</category>
+		<category>
+			<code>12</code>
+			<name>12 Procedure for Corrective Action</name>
+			<description></description>
+			<subcategories>
+			</subcategories>
+		</category>
+	</subcategories>
+</category>

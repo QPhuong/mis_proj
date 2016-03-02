@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:form id="documentSecurityForm" style="margin-top:10px;">
+
+	<p:panel styleClass="panelControlHeader" rendered="#{documentSecurityBean.selectedDoc.canEdit(authenticationBean.logindUser)}">
+		<p:commandButton actionListener="#{documentSecurityBean.doSaveAllDocumentSecurity}" ajax="true" 
+      		value="Save All" update="@form" style="margin-right:5px;" icon="ui-icon-disk"/>
+		<p:commandButton value="Reset" actionListener="#{documentSecurityBean.doResetAllDocumentSecurity}" 
+			ajax="true" update="@form" icon="ui-icon-refresh"/>
+	</p:panel>
+	
+	<p:contextMenu for="securityTable" id="docSecurityContextMenu" widgetVar="docSecurityContextMenuVar" rendered="#{documentSecurityBean.selectedDoc.canEdit(authenticationBean.logindUser)}">
+		<p:menuitem value="Delete" icon="ui-icon-trash" oncomplete="PF('confirmationDeleteDocumentSecurity').show()" ajax="true" 
+	            	update="@([id$=confirmDeleteDocumentSecurityDialog])" />
+		
+		<p:menuitem value="Apply to all sub unit" icon="ui-icon-disk" oncomplete="PF('confirmAllyDocumentSecurityAllSub').show()" ajax="true" 
+	            	update="@([id$=confirmApplyDocumentSecurityAllSubUnitDialog])" rendered="${(not empty documentSecurityBean.selectedSecurity.orgUnit)}"/>  
+	            		            	
+	    <p:menuitem value="Inherit Rights" icon="ui-icon-disk" oncomplete="PF('confirmInheritDocumentSecurity').show()" ajax="true" 
+	            	update="@([id$=confirmInheritDocSecurityDialog])" rendered="${(not empty documentSecurityBean.selectedSecurity.orgUnit)}"/>
+	</p:contextMenu>
+	
+	<p:messages severity="error" autoUpdate="false" />
+	<p:panelGrid styleClass="securityEntityPanel" style="margin-bottom: 5px;" rendered="#{documentSecurityBean.selectedDoc.canEdit(authenticationBean.logindUser)}">
+		<p:row>
+			<p:column><h:outputText value="Add Organization Unit"/></p:column>
+			<p:column>
+				<p:autoComplete value="#{documentSecurityBean.selectedOrgUnit}" completeMethod="#{documentSecurityBean.doSearchOrganizationUnit}" size="50" dropdown="true"
+					var="orgUnit" itemLabel="#{orgUnit.name}" itemValue="#{orgUnit}" converter="#{organizationUnitConverter}" forceSelection="false">
+						<p:ajax event="itemSelect" update="addOrgUnitBtn, addAllSubOrgUnitBtn, addInheritOrgUnitBtn" />
+						<p:ajax event="change" update="addOrgUnitBtn, addAllSubOrgUnitBtn, addInheritOrgUnitBtn" />
+				</p:autoComplete>				
+			</p:column>
+			<p:column>
+				<p:commandButton value="Add" id="addOrgUnitBtn" icon="ui-icon-plusthick" 
+					actionListener="#{documentSecurityBean.doAddNewDocumentSecurity}" update="@form"
+					style="margin-left:20px;" disabled="${(empty documentSecurityBean.selectedOrgUnit)}"/>
+				<p:commandButton value="Add all sub unit" id="addAllSubOrgUnitBtn" icon="ui-icon-plusthick" 
+					actionListener="#{documentSecurityBean.doAddAllSubOrgUnitDocumentSecurity}" 
+					update="@form" style="margin-left:5px;" disabled="${empty documentSecurityBean.selectedOrgUnit}"/>
+				<p:commandButton value="Add Inherit Rights" id="addInheritOrgUnitBtn" icon="ui-icon-plusthick" 
+					actionListener="#{documentSecurityBean.doAddDocumentSecurityInherit}" 
+					update="@form" style="margin-left:5px;" disabled="${empty documentSecurityBean.selectedOrgUnit}"/>
+			</p:column>
+		</p:row>
+		<p:row>
+			<p:column><h:outputText value="Add User"/></p:column>
+			<p:column>
+				<p:autoComplete value="#{documentSecurityBean.selectedUser}" completeMethod="#{documentSecurityBean.doSearchUser}" size="50" dropdown="true"
+					var="user" itemLabel="#{user.searchDisplayedName}" itemValue="#{user}" converter="#{userConverter}" forceSelection="false">
+					<p:ajax event="itemSelect" update="addUserBtn" />
+					<p:ajax event="change" update="addUserBtn"/>
+				</p:autoComplete>				
+			</p:column>
+			<p:column>
+				<p:commandButton value="Add" id="addUserBtn" icon="ui-icon-plusthick" 
+					actionListener="#{documentSecurityBean.doAddNewDocumentSecurity}" update="@form"
+					style="margin-left:20px;" disabled="${(empty documentSecurityBean.selectedUser)}"/>
+			</p:column>
+		</p:row>
+	</p:panelGrid>
+     
+	<p:dataTable value="#{documentSecurityBean.securityLst}" var="security" resizableColumns="true" scrollable="true" styleClass="securityTable"
+		rowKey="#{security.hashCode()}" id="securityTable" selectionMode="single" selection="#{documentSecurityBean.selectedSecurity}">
+		
+		<p:ajax event="rowSelect" update="@([id$=docSecurityContextMenu])"  />
+		<p:ajax event="contextMenu" update="@([id$=docSecurityContextMenu])" oncomplete="PF('docSecurityContextMenuVar').show();" />
+		
+		<p:column headerText="" style="width:16px;text-align: center; vertical-align: middle;">  
+			<h:graphicImage url="/images/icon/user.png" rendered="#{not empty security.user}"/>
+			<h:graphicImage url="/images/icon/user_group.png" rendered="#{not empty security.orgUnit}"/>
+		</p:column>
+		
+		<p:column headerText="Entity">  
+			<h:outputText value="#{security.orgUnit.name}" rendered="#{not empty security.orgUnit}"/>
+			<h:outputText value="#{security.user.fullname}" rendered="#{not empty security.user}"/>
+		</p:column>
+		
+		<p:column headerText="View Document Info" style="width:80px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canViewDocInfo}" disabled="${!documentSecurityBean.selectedDoc.canEdit(authenticationBean.logindUser)}"/>
+		</p:column>
+		
+		<p:column headerText="Download Doc" style="width:60px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canDownloadDoc}" disabled="${!documentSecurityBean.selectedDoc.canEdit(authenticationBean.logindUser)}"/>
+		</p:column>
+		
+		<p:column headerText="Delete Doc" style="width:40px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canDeleteDoc}" disabled="${!documentSecurityBean.selectedDoc.canEdit(authenticationBean.logindUser)}"/>
+		</p:column>
+		
+		<p:column headerText="Edit Doc" style="width:40px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canEditDoc}" disabled="${!documentSecurityBean.selectedDoc.canEdit(authenticationBean.logindUser)}"/>
+		</p:column>
+		
+		<p:column headerText="Setup Security" style="width:70px;text-align: center; vertical-align: middle;" styleClass="wrap">
+			<p:selectBooleanCheckbox value="#{security.canSetupSecurity}" disabled="${!documentSecurityBean.selectedDoc.canEdit(authenticationBean.logindUser)}"/>
+		</p:column>
+		
+	</p:dataTable>
+	
+	<script>
+	$(document).ready(function() {
+		$('[id$=documentSecurityForm]').on("keyup keypress", function(e) {
+  			var code = e.keyCode || e.which; 
+  			if (code  == 13) {               
+    			e.preventDefault();
+    			return false;
+  			}
+		});
+	});
+	</script>
+	
+</h:form>
+
+<p:confirmDialog id="confirmDeleteDocumentSecurityDialog" message="Are you sure to delete this document security?"  
+              header="Delete Document Security" severity="alert" widgetVar="confirmationDeleteDocumentSecurity" appendTo="@(body)">  
+      <h:form id="docSecurityDeleteFrm" style="float:right">
+      <p:commandButton id="confirm" value="Yes" update="@([id$=documentSecurityForm])" oncomplete="PF('confirmationDeleteDocumentSecurity').hide()"  
+                  actionListener="#{documentSecurityBean.doDeleteDocumentSecurity}" />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmationDeleteDocumentSecurity').hide()" type="button"/>   
+       </h:form>         
+</p:confirmDialog>
+
+<p:confirmDialog id="confirmInheritDocSecurityDialog" message="Are you sure to inherit the security from higher level?"  
+              header="Inherit Document Security" severity="alert" widgetVar="confirmInheritDocumentSecurity" appendTo="@(body)">  
+      <h:form style="float:right">
+      <p:commandButton id="confirm" value="Yes" update="@([id$=documentSecurityForm])" oncomplete="PF('confirmInheritDocumentSecurity').hide()"  
+                  actionListener="#{documentSecurityBean.doApplyInheritSecurityFromParent}" />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmInheritDocumentSecurity').hide()" type="button"/>   
+       </h:form>         
+</p:confirmDialog>
+
+<p:confirmDialog id="confirmApplyDocumentSecurityAllSubUnitDialog" message="Are you sure to apply this document security to all sub organization unit?"  
+              header="Apply Document Security to sub organization unit" severity="alert" widgetVar="confirmAllyDocumentSecurityAllSub" appendTo="@(body)">  
+      <h:form style="float:right">
+      <p:commandButton id="confirm" value="Yes" update="@([id$=documentSecurityForm])" oncomplete="PF('confirmAllyDocumentSecurityAllSub').hide()"  
+                  actionListener="#{documentSecurityBean.doApplyToAllSubOrgUnit}" />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmAllyDocumentSecurityAllSub').hide()" type="button"/>   
+       </h:form>         
+</p:confirmDialog>
+
+
+</html>

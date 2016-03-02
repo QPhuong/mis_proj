@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+	
+<h:form id="categoryTreeForm">
+	<p:commandButton id="resetEditDialog" style="display:none">
+		<p:ajax update="@([id$=newCategoryForm])" resetValues="true" />
+	</p:commandButton>
+	
+	<p:remoteCommand name="selectSort" update="@form" actionListener="#{categoryTreeBean.doReloadCategoryTree}" process="@form"/>
+	
+	<p:commandButton id="sortCategoryBtn" icon="ui-icon-sort" title="Sort" style="float:right;z-index:1;margin-bottom: -22px;"/>
+	<p:overlayPanel showEffect="blind" hideEffect="explode" for="sortCategoryBtn" style="width:150px;position:fixed;">
+		<h:panelGroup layout="block">
+		<p:selectOneRadio id="sortValue" value="#{categoryTreeBean.selectedSortValue}" layout="grid" columns="1" 
+				onchange="selectSort();" styleClass="noBorderRadioButton" converter="#{propertyConverter}">
+            <f:selectItems value="#{categoryTreeBean.sortCategoryValues}" var="item" itemLabel="#{item.value.displayedName}"/>
+        </p:selectOneRadio>
+        <p:separator />
+        <p:selectOneRadio id="sortType" value="#{categoryTreeBean.selectedSortType}" layout="grid" columns="1" 
+        		onchange="selectSort();" styleClass="noBorderRadioButton" converter="#{propertyConverter}">
+            <f:selectItems value="#{categoryTreeBean.sortTypes}" var="item" itemLabel="#{item.value.text}"/>
+        </p:selectOneRadio>
+        </h:panelGroup>
+	</p:overlayPanel>
+		
+	<p:tree value="#{categoryTreeBean.root}" var="node" id="categories" selectionMode="single" 
+		styleClass="categoryTree" style="width:100%; heigh:100%;padding-right:5px;"
+		selection="#{categoryTreeBean.selectedNode}" dynamic="true">
+		<p:ajax event="select" listener="#{categoryTreeBean.onNodeSelect}" update="@([id$=documentLstForm]), @([id$=mainDetailPanel]), @form"/>
+		<p:ajax event="unselect" listener="#{categoryTreeBean.onNodeUnSelect}" update="@([id$=documentLstForm]), @([id$=mainDetailPanel])"/>
+		<p:ajax event="contextMenu" update="@([id$=contextmenu])" listener="#{categoryTreeBean.onNodeSelect}"
+				oncomplete="PF('cateContextMenuVar').show();"/>
+        <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+            <h:outputText value="#{node.name}" id="categoryItem" style="white-space: normal;"/>
+            <p:tooltip for="categoryItem" rendered="${not empty node.description}">
+            	<h:outputText value="#{node.description}" escape="false"></h:outputText>
+            </p:tooltip>
+        </p:treeNode>
+    </p:tree>
+    
+    <p:contextMenu for="categories" id="contextmenu" widgetVar="cateContextMenuVar">
+        <p:menuitem value="New Category" icon="ui-icon-circle-plus" onstart="$('[id*=resetEditDialog]').click()" oncomplete="PF('editCategoryDialogVar').show()" 
+        			update="@([id$=editCategoryDialog])" actionListener="#{categoryTreeBean.doAddCategory}" 
+        			disabled="#{not categoryTreeBean.selectedCategory.finalSecurity.canAddCategory}"/>
+        <p:menuitem value="Delete Category" icon="ui-icon-trash" oncomplete="PF('confirmationDelete').show()" ajax="true" 
+	            	update="@([id$=confirmDeleteCategoryDialog])" 
+	            	disabled="#{(not categoryTreeBean.selectedCategory.finalSecurity.canDeleteCategory) or (categoryTreeBean.selectedCategory.locked)}"/>
+        <p:menuitem value="Edit Category" icon="ui-icon-pencil" onstart="$('[id*=resetEditDialog]').click()" oncomplete="PF('editCategoryDialogVar').show()"
+        			update="@([id$=editCategoryDialog])" actionListener="#{categoryTreeBean.doRenameCategory}"
+        			disabled="#{not categoryTreeBean.selectedCategory.finalSecurity.canEditCategory}"/>
+        <p:menuitem value="Move Category" icon="ui-icon-arrow-4" oncomplete="PF('moveCategoryDialogVar').show()"
+        			update="@([id$=moveCategoryDialog])" actionListener="#{categoryTreeBean.doOpenMoveToDialog}"
+        			disabled="#{not categoryTreeBean.selectedCategory.finalSecurity.canMoveCategory}"/>
+    </p:contextMenu>    
+</h:form>    
+
+<p:dialog id="editCategoryDialog" header="#{categoryTreeBean.editCategoryDialogHeader}" widgetVar="editCategoryDialogVar" appendTo="@(body)" modal="true">  
+      <h:form id="newCategoryForm"> 
+      		<p:messages severity="error" />
+			<p:panelGrid cellpadding="5" id="newCategoryPanel" styleClass="newCategoryDialogPanel">
+				<p:row>
+					<p:column style="width:120px"><p:outputLabel for="categoryCode" value="Category code: " /></p:column>
+					<p:column><p:inputText id="categoryCode" size="76" value="#{categoryTreeBean.selectedCategory.code}" required="true"/></p:column>
+				</p:row>
+				<p:row>
+					<p:column style="width:120px"><p:outputLabel for="categoryName" value="Category name: " /></p:column>
+					<p:column><p:inputText id="categoryName" size="76" value="#{categoryTreeBean.selectedCategory.name}" required="true"/></p:column>
+				</p:row>
+	            <p:row>
+	            	<p:column><p:outputLabel for="description" value="Description: " /></p:column>
+	            	<p:column>
+	            		<p:editor id="description" widgetVar="descriptionVar" value="#{categoryTreeBean.selectedCategory.description}" width="500"
+	            			controls="bold italic underline strikethrough subscript superscript | font size style | color highlight removeformat | bullets numbering | outdent indent | alignleft center alignright justify | undo redo | rule link unlink | cut copy paste pastetext | source">
+	            		</p:editor>
+	            	</p:column>
+	            </p:row>
+	            <p:row>
+	            	<p:column></p:column>
+	            	<p:column>
+	            		<p:commandButton id="save" value="Save" update="@([id$=documentLstForm]), @([id$=mainDetailPanel]), @form, @([id$=categoryTreeForm])" 
+	            				oncomplete="if (args &amp;&amp; !args.validationFailed) PF('editCategoryDialogVar').hide()" 
+					            actionListener="#{categoryTreeBean.doSaveCategory}" style="margin-right:5px;"/>  
+					    <p:commandButton id="decline" value="Cancel" onclick="PF('editCategoryDialogVar').hide()" type="button" /> 
+	            	</p:column>
+	            </p:row>
+	        </p:panelGrid>         
+      </h:form>         
+</p:dialog>
+
+<p:confirmDialog id="confirmDeleteCategoryDialog" message="Are you sure to delete this category (#{categoryTreeBean.getSelectedCategory().name})?"  
+              header="Delete Category" severity="alert" widgetVar="confirmationDelete" appendTo="@(body)">  
+      <h:form id="categoryDeleteConfirmDialog" style="float:right;">          
+      <p:commandButton id="confirm" value="Yes" update="@([id$=categoryTreeForm]), @([id$=documentLstForm]), @([id$=mainDetailPanel])" oncomplete="PF('confirmationDelete').hide()"  
+                  actionListener="#{categoryTreeBean.doDeleteCategory}" />  
+      <p:commandButton id="decline" value="No" onclick="PF('confirmationDelete').hide()" type="button" />   
+       </h:form>         
+</p:confirmDialog>
+
+<p:dialog id="moveCategoryDialog" header="Move to another category" widgetVar="moveCategoryDialogVar" appendTo="@(body)" 
+		modal="true">  
+      <h:form id="moveCategoryForm" > 
+		<p:tree value="#{categoryTreeBean.movetoRootNode}" var="node" id="categories" selectionMode="single"
+				selection="#{categoryTreeBean.moveToselectedNode}" dynamic="true" style="width:100%; height:100%">
+		    <p:ajax event="select" update=":moveCategoryForm" listener="#{categoryTreeBean.onMoveToNodeSelect}"/>
+			<p:ajax event="unselect" update=":moveCategoryForm" listener="#{categoryTreeBean.onMoveToNodeUnSelect}"/>
+		    <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+		    	<h:outputText value="#{node.name}" />
+		    </p:treeNode>
+		</p:tree>
+		<h:panelGroup style="margin-left:auto; margin-right:auto;margin-top:5px;vertical-align: center;width:150px;" layout="block">
+			<p:commandButton id="confirm" value="Save" update="@([id$=categoryTreeForm]), @([id$=documentLstForm]), @([id$=mainDetailPanel])" oncomplete="PF('moveCategoryDialogVar').hide()"  
+	                  actionListener="#{categoryTreeBean.doMoveCategory}" style="margin-right:5px;" disabled="#{not categoryTreeBean.selectMoveToCategoryNode}"/>  
+		    <p:commandButton id="decline" value="Cancel" onclick="PF('moveCategoryDialogVar').hide()" type="button" />
+		</h:panelGroup>   
+      </h:form>         
+</p:dialog>
+		
+</html>

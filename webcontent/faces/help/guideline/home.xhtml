@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+
+<ui:composition template="/templates/layoutUserGuide.xhtml">
+	<ui:define name="guideCenter">
+		<style>
+		.header {
+			border-bottom: 1px solid rgba(0, 0, 0, 0.075);
+			color: #2985cc;
+			font-size: 36px;
+			line-height: 36px;
+			font-family: "Open Sans",sans-serif;
+    		font-weight: 300;
+		}
+		
+		.content {
+			color:#6c7a8a;
+			font-family: "Open Sans Condensed",sans-serif;
+			font-size: 16px;
+    		line-height: 20px;
+		}
+		</style>
+		<p:outputPanel>
+			<h1 class="header">ISO Document Management System Documentation</h1>
+			<!-- <p class="content">ISO Document Management System is an enterprise electronic document management system which is extremely useful for both small and large companies. &nbsp;It is a valuable tool in knowledge management processing that provides a more flexible and lower-cost alternative to other proprietary applications.</p>
+			<p class="content">A company’s use of knowledge management systems facilitates the intelligent and efficient management of its resources. &nbsp;This leads to significant productivity increases. These systems allow universal access to the information and knowledge that is generated within the organization.</p>
+			<p class="content">It is easy to use LogicalDOC to manage your company’s documents. One of our major goals is the usability case study. LogicalDOC is a document management application with a web user interface that permits the following operations: sharing, setting security roles, auditing, and finding enterprise documents and registers. LogicalDOC allows users to easily collaborate and communicate.</p> -->
+		</p:outputPanel>		
+				
+	</ui:define>
+</ui:composition>
+
+</html>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+    version="2.2">
+
+ <application>
+  	<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+ </application>
+ <factory>
+  	<partial-view-context-factory>org.primefaces.context.PrimePartialViewContextFactory</partial-view-context-factory>
+ </factory>
+
+ <navigation-rule>
+  <from-view-id>/faces/login.xhtml</from-view-id>
+    <navigation-case>
+      <from-outcome>success</from-outcome>
+	  <to-view-id>/faces/document/document.xhtml</to-view-id>
+	  <redirect />
+   </navigation-case>  
+ </navigation-rule>
+ 
+ <navigation-rule>
+  <from-view-id>/faces/search/search.xhtml</from-view-id>
+    <navigation-case>
+      <from-outcome>document</from-outcome>
+	  <to-view-id>/faces/document/document.xhtml</to-view-id>
+	  <redirect />
+   </navigation-case>  
+ </navigation-rule>
+ 
+ <navigation-rule>
+  <from-view-id>/faces/document/document.xhtml</from-view-id>
+    <navigation-case>
+      <from-outcome>document</from-outcome>
+	  <to-view-id>/faces/document/document.xhtml</to-view-id>
+	  <redirect />
+   </navigation-case>  
+ </navigation-rule>
+ 
+ <lifecycle>
+ </lifecycle>
+ 
+</faces-config>

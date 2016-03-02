@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:document="http://java.sun.com/jsf/composite/document">
+
+<ui:composition template="/templates/layout.xhtml">
+<ui:define name="center">
+	<script>
+		var siteFunctions = {
+			    //patch to fix a problem that the context menu disappears after update
+			    //delay the show to occure after the update 
+			    patchContextMenuShow: function() {
+			        'use strict';
+			        
+			        var protShow = PrimeFaces.widget.ContextMenu.prototype.show;
+			        siteFunctions.patchContextMenuShow.lastEvent = null;
+			        PrimeFaces.widget.ContextMenu.prototype.show = function(e) {
+			            var ret;
+			            if (e) {
+			                siteFunctions.patchContextMenuShow.lastEvent = e;
+			                siteFunctions.patchContextMenuShow.lastEventArg = arguments;
+			                siteFunctions.patchContextMenuShow.lastEventContext = this;
+			            } else if (siteFunctions.patchContextMenuShow.lastEvent) {
+			                ret = protShow.apply(siteFunctions.patchContextMenuShow.lastEventContext, siteFunctions.patchContextMenuShow.lastEventArg);
+			                siteFunctions.patchContextMenuShow.lastEvent = null;
+			            }
+			            return ret;
+			        };
+			    }
+			};
+			$(document).ready(function() {
+			    'use strict';
+			    try {
+			        siteFunctions.patchContextMenuShow();
+			    } catch (e) {
+			        console.error(e);
+			    }
+			});
+	</script>
+
+	<pe:layoutPane position="west" size="420" minWidth="350">
+		<style>
+			.accordionSearchPanel .ui-accordion-content {
+				padding: 5px !important;
+				border: 1px solid #79b7e7 !important;
+				border-top: none !important;;
+			}
+			
+			.resultLayout {
+				overflow: hidden !important;
+			}
+		</style>
+		<p:accordionPanel id="accordionSearchPanel" styleClass="accordionSearchPanel">
+			<p:ajax event="tabChange" listener="#{documentSearchBean.onSearchTabChange}" />
+			<p:tab title="Document Search">
+				<ui:include src="searchCriteria.xhtml"></ui:include>
+			</p:tab>
+			<p:tab title="Trash">
+				<ui:include src="searchTrash.xhtml"></ui:include>
+			</p:tab>
+		</p:accordionPanel>
+		
+	</pe:layoutPane>
+
+	<pe:layoutPane position="center">
+		<pe:layoutPane position="center" styleClassContent="resultLayout">
+			<h:form>
+				<p:remoteCommand name="refreshDetail" actionListener="#{documentSearchBean.doDetailTabRefresh}" 
+					update="@([id$=detailPanel])"/>
+			</h:form>
+			<document:isoDocumentList showToolbar="false" showTable="#{documentSearchBean.renderSearchDocResult}"
+					updateOtherComponentId="@([id$=detailPanel])" oncompleteDocumentAction="refreshDetail()"/>
+			<document:isoTrashList showTable="#{documentSearchBean.renderSearchTrashResult}"
+					updateOtherComponentId="@([id$=detailPanel])" oncompleteDocumentAction="refreshDetail()" />
+		</pe:layoutPane>
+		
+		<pe:layoutPane position="south" size="50%" styleClassContent="detailLayout">
+			<h:panelGroup id="detailPanel" layout="block">
+				<p:tabView activeIndex="#{documentSearchBean.activeDocDetailTabIndex}" id="docDetailTab" cache="true" scrollable="true"
+					rendered="#{documentSearchBean.renderDocumentDetailMainTab}">
+					<p:ajax event="tabChange" update="@([id$=detailPanel])" listener="#{documentSearchBean.onDocumentDetailTabChange}"/>
+					<p:tab title="Document Properties" />
+					<p:tab title="Document Ext. Properties" />
+					<p:tab title="Document Histories" />
+					<p:tab title="Document Version" />
+ 				</p:tabView>
+				
+				<p:tabView id="trashDetailTab" cache="true" scrollable="true"
+					rendered="#{documentSearchBean.renderTrashDetailMainTab}">
+					<p:tab title="Document Properties" rendered="#{documentSearchBean.renderDocPropertiesTabContent}"/>
+					<p:tab title="Category Properties" rendered="#{documentSearchBean.renderCategoryPropertiesTabContent}"/>
+				</p:tabView>
+				
+				<h:panelGroup layout="block" rendered="#{documentSearchBean.renderCategoryPropertiesTabContent}">
+					<ui:include src="../document/categoryProperties.xhtml"/>
+				</h:panelGroup>
+				
+				<h:panelGroup layout="block" rendered="#{documentSearchBean.renderDocPropertiesTabContent}">
+					<ui:include src="../document/documentProperties.xhtml"/>
+				</h:panelGroup>
+				
+				<h:panelGroup layout="block" rendered="#{documentSearchBean.renderDocExtPropertiesTabContent}">
+					<ui:include src="../document/documentExtProperties.xhtml"/>
+				</h:panelGroup>
+				
+				<h:panelGroup layout="block" rendered="#{documentSearchBean.renderDocHistoriesTabContent}">
+					<ui:include src="../document/documentHistories.xhtml"/>
+				</h:panelGroup>
+				
+				<h:panelGroup layout="block" rendered="#{documentSearchBean.renderDocVersionsTabContent}">
+					<ui:include src="../document/documentVersions.xhtml"/>
+				</h:panelGroup>
+				
+			</h:panelGroup>
+			
+		</pe:layoutPane>
+	</pe:layoutPane>
+</ui:define>
+</ui:composition>
+</html>

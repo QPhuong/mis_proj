@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+
+<ui:composition template="/templates/layoutAdministrator.xhtml">
+	<ui:define name="adminCenter">
+		<!-- <p:dataTable resizableColumns="true" style="margin-top:10px;">
+			<p:row>
+				<p:column>
+					
+				</p:column>
+				<p:column></p:column>
+				<p:column></p:column>
+			</p:row>
+		</p:dataTable> -->
+		<p:panelGrid styleClass="noBorderPanelGrid" columns="2">
+			<h:outputText value="Product"></h:outputText>
+			<h:outputText value="Iso Document Management"></h:outputText>
+			<h:outputText value="Version"></h:outputText>
+			<h:outputText value="1.0"></h:outputText>
+			<h:outputText value="Date"></h:outputText>
+			<h:outputText value="01-June-2015"></h:outputText>
+			<h:outputText value="Author"></h:outputText>
+			<h:outputText value="Pham Quynh Thanh Phuong"></h:outputText>
+			<h:outputText value="Features"></h:outputText>
+		</p:panelGrid>
+	</ui:define>
+</ui:composition>
+
+</html>

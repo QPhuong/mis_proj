@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+
+<ui:composition template="/templates/layout.xhtml">
+	<ui:define name="center">
+	<style>
+		.pe-layout-pane-content {
+			overflow: hidden !important;
+		}
+		
+	</style>
+	<h:form>
+		<p:panel style="padding:0px;margin-bottom:5px;box-shadow: 1px 1px 1px #70A8D2;" id="buttonPanel">
+			<p:commandButton actionListener="#{evaluationBean.doSave}" value="Save" 
+	   				update="@form" icon="ui-icon-disk" style="margin-left:5px;margin-right: 10px;"/>
+			<p:commandButton value="Search document" update="@form" icon="ui-icon-search"  style="margin-right: 10px;"
+					actionListener="#{evaluationBean.doCheckDocumentsForAllControls}" disabled="#{evaluationBean.temporaryChecklist}"/>
+			<p:commandButton value="Auto-evaluate" update="@form" icon="ui-icon-calculator" 
+					actionListener="#{evaluationBean.doAutoEvaluate}" disabled="#{evaluationBean.temporaryChecklist}"/>
+		</p:panel>
+		<p:sticky target="buttonPanel" />
+		
+		<p:treeTable value="#{evaluationBean.root}" var="control" selectionMode="single" selection="#{evaluationBean.selectedNode}"
+			rowKey="#{control.hashCode()}" rowStyleClass="checklistControl_#{control.level}" scrollable="true"
+			resizableColumns="true" styleClass="evaluationTable">
+			
+			<f:facet name="header">
+	            ISO 27001:2013 Internal Audit Checklist
+	        </f:facet>
+			
+			<p:column headerText="Control" style="height:20px;width:100px;" >
+            	<h:outputText value="#{control.control}" />
+	        </p:column>
+	        <p:column headerText="Section" style="width:20%">
+	            <h:outputText value="#{control.controlName}" />
+	        </p:column>
+	        <p:column headerText="Initial Assessment Points">
+	        	<h:panelGroup layout="block" style="margin-left:-40px;margin-top:-11px;margin-bottom:-11px;">
+		            <p:dataList value="#{control.assessmentPoints}" var="point" rendered="#{control.assessmentPoints.size() gt 0}"
+						type="unordered" itemType="none" emptyMessage="" styleClass="noBorderDataList checklistControl_#{control.level}">
+						<h:outputText value="#{point}" style="white-space: normal;"></h:outputText>
+					</p:dataList>
+				</h:panelGroup>
+	        </p:column>
+	        <p:column headerText="Findings" style="width:30%">
+	        	<h:panelGroup layout="block" style="margin-left:-40px;margin-top:-11px;margin-bottom:-11px;">
+		            <p:dataList value="#{control.findings}" var="document" rendered="#{control.findings.size() gt 0}"
+						type="unordered" itemType="none" emptyMessage="" styleClass="noBorderDataList checklistControl_#{control.level}">
+						<h:outputText value="#{document.fileName}" style="white-space: normal;"></h:outputText>
+					</p:dataList>
+				</h:panelGroup>
+	        </p:column>
+	        <p:column headerText="Status" style="width:90px;background-color: hsl(#{2*control.status}, 100%, 50%);">
+	        	<!-- <p:inputText id="status" value="#{control.status}" style="width:80px;"/> -->
+	        	<pe:inputNumber id="status" value="#{control.status}" styleClass="statusInputNumber"
+	        		minValue="0" maxValue="100" symbol="%" symbolPosition="s" emptyValue="zero" decimalPlaces="0"/>
+        		<!-- <p:slider for="status" style="width: 100px"/> -->
+	        </p:column>
+		</p:treeTable>
+	</h:form>
+	</ui:define>
+</ui:composition>
+
+</html>

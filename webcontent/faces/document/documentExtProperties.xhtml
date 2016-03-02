@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<p:dialog appendTo="@(body)" modal="true" header="Add new Property" showEffect="blind" hideEffect="blind" 
+	id="newDocPropDialog" widgetVar="newDocPropDialogVar" onShow="removeDuplicateDialogs(this.id)">
+	<h:form id="newDocPropForm">
+		<p:messages severity="error" autoUpdate="true"/>		
+		<p:panelGrid styleClass="noBorderPanelGrid" columns="2">
+			<p:outputLabel value="Property Name" for="name"/>
+			<p:inputText id="name" value="#{documentExtPropertiesBean.newPropertyName}" required="true" size="40"/>
+			<p:outputLabel value="Property Type" for="controlType"/>
+			<p:selectOneMenu value="#{documentExtPropertiesBean.newControlType}" effect="fade" id="controlType" >
+				<f:selectItems value="#{documentExtPropertiesBean.controlTypeSelectItems}" />
+			</p:selectOneMenu>
+		</p:panelGrid>
+		<p:separator/>
+		<h:panelGroup style="margin-left:auto; margin-right:auto;width: 120px;margin-top:5px;" layout="block">
+			<p:commandButton ajax="true" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('newDocPropDialogVar').hide()" 
+					actionListener="#{documentExtPropertiesBean.doAddNewExtProperty}" process="@form"
+	            	value="OK" update="@([id$=docExtPropForm]) @form" style="margin-right:5px;"/>
+   			<p:commandButton value="Cancel" process="@this" immediate="true" oncomplete="PF('newDocPropDialogVar').hide()"/>
+		</h:panelGroup>
+	</h:form>
+</p:dialog>
+
+<h:form id="docExtPropForm" styleClass="updatedPanel">
+	
+	<p:panel styleClass="panelControlHeader" rendered="#{(documentExtPropertiesBean.selectedDoc.canEdit(authenticationBean.logindUser))}">
+		<p:commandButton value="Add Property" actionListener="#{documentExtPropertiesBean.doOpenNewPropDialog}" oncomplete="PF('newDocPropDialogVar').show()" 
+			style="margin-right: 5px;" icon="ui-icon-plusthick" update="@([id$=newDocPropDialog])">
+			<p:ajax update="@([id$=newDocPropForm])" resetValues="true" />
+		</p:commandButton>
+		<p:commandButton value="Save" style="margin-right: 5px;" icon="ui-icon-disk"
+			actionListener="#{documentExtPropertiesBean.doSaveExtProperties}" update="@form">
+			<p:resetInput target="docExtPropForm" />
+		</p:commandButton>
+		<p:commandButton value="Reset" icon="ui-icon-refresh" process="@this" actionListener="#{documentExtPropertiesBean.doResetExtProperties}"
+			update="@form" style="margin-right: 5px;">
+			<p:resetInput target="docExtPropForm" />
+		</p:commandButton>
+		<p:outputLabel value="Version Comment " style="margin-left: 20px;margin-right:5px;"/>
+		<p:inputText size="80" value="#{documentPropertiesBean.versionComment}"/>
+	</p:panel>
+	
+	<h:panelGroup layout="block" styleClass="extPropertiesPanel">	
+		<pe:dynaForm id="dynaForm" value="#{documentExtPropertiesBean.model}" var="data" autoSubmit="false" 
+		                widgetVar="dynaFormWidget" buttonBarPosition="top" style="margin-top:5px;">
+			<pe:dynaFormControl type="input" for="input">  
+		        <p:inputText id="input" value="#{data.value}" size="60" disabled="#{not data.editable}"/>
+		    </pe:dynaFormControl>
+		    <pe:dynaFormControl type="boolean" for="boolean">  
+		        <p:selectBooleanCheckbox id="boolean" value="#{data.value}" disabled="#{not data.editable}"/>  
+		    </pe:dynaFormControl>  
+		    <pe:dynaFormControl type="date" for="date" styleClass="calendar">  
+		        <p:calendar id="date" value="#{data.value}" showOn="button" pattern="dd/MM/yyyy" disabled="#{not data.editable}"/>  
+		    </pe:dynaFormControl>  
+		    <pe:dynaFormControl type="datetime" for="datetime" styleClass="calendar">  
+		        <p:calendar id="datetime" value="#{data.value}" showOn="button" pattern="dd/MM/yyyy HH:mm:ss" disabled="#{not data.editable}"/>  
+		    </pe:dynaFormControl>
+		    <pe:dynaFormControl type="textarea" for="textarea">  
+		        <p:inputTextarea id="textarea" value="#{data.value}" autoResize="false" cols="61" rows="2" disabled="#{not data.editable}"/>  
+		    </pe:dynaFormControl>  
+		    <pe:dynaFormControl type="number" for="number">
+		    	<p:inputText id="number" value="#{data.value}" size="60" disabled="#{not data.editable}"/>   
+		    	<pe:keyFilter for="number" mask="num"/>
+		    </pe:dynaFormControl>
+		    <pe:dynaFormControl type="delete" for="delete">
+		    	<p:commandButton id="delete" icon="ui-icon-trash" actionListener="#{documentExtPropertiesBean.doDeleteProperty(data)}"
+		    		update="@form" disabled="#{not data.editable}"/>
+		    </pe:dynaFormControl>        
+		</pe:dynaForm>
+	</h:panelGroup>
+	
+</h:form>
+
+</html>

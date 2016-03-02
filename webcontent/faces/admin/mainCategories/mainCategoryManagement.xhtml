@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/templates/layoutAdministrator.xhtml">
+	<ui:define name="adminCenter">
+		<style>
+			 .categoryTabLayout  {  
+		        background: none;  
+		        border: none;  
+		        color: #000000;  
+		        padding: 4px;  
+		        overflow: hidden;  
+		    }
+		    div[id$='mainCategoryLayout'] .ui-layout-toggler{
+		    	display:none !important;
+		    }
+		    .ui-layout-north, .ui-layout-south, .ui-layout-center, .ui-layout-west, .ui-layout-east {
+		    	z-index: auto !important;
+		    }   
+		    div[id$='mainCategoryLayout'] {
+		    	 z-index:auto !important;
+		    	 overflow:visible !important;
+		    }
+		    
+		</style>
+		<script>
+			function setCSSStyleCenterLayout() {
+				if ($("div[id$='mainCategoryLayout'] .ui-layout-center").css('left') == '6px') {
+					$("div[id$='mainCategoryLayout'] .ui-layout-center").css('left','0px');
+				}
+			}
+			function toogleMainCategoryLayout() {
+				PF('mainLayoutVar').toggle('center_center_center_north');
+				PF('mainLayoutVar').toggle('center_center_center_west');
+				PF('mainLayoutVar').toggle('center_center_center_south');
+				$("div[id$='mainCategoryLayout'] .ui-layout-south").css('left','6px');
+				updateMainCateType();
+			}				
+		</script>
+		<pe:layoutPane position="north" spacingOpen="0" resizable="false" closable="false" styleClassContent="categoryTabLayout">
+			<h:form>
+			<p:tabView activeIndex="#{mainCategoryBean.activeTabIndex}" cache="true">
+				<p:ajax event="tabChange" update=":centerPanel :westPanel :southPanel "
+					listener="#{mainCategoryBean.onTabChange}" oncomplete="toogleMainCategoryLayout();"/>
+				<p:tab title="Main Category Detail"></p:tab>
+				<p:tab title="Main Category Type"></p:tab>
+			</p:tabView>
+			</h:form>
+		</pe:layoutPane>
+		
+		<pe:layoutPane position="center" styleClassContent="categoryTabLayout" id="mainCategoryLayout">
+			
+			<pe:layoutPane position="north" spacingOpen="0" resizable="false" closable="true" styleClassContent="categoryTabLayout">
+				<h:form id="mainCategoryTypeForm">
+					<p:remoteCommand name="updateMainCateType" update="@form" />
+					<p:remoteCommand name="selectCategoryType" actionListener="#{mainCategoryBean.doChangeCategoryType}" 
+							update="@([id$=mainCategoryTreeForm]) @([id$=mainCategoryDetailPanel]) @form" process="@form"/>
+					<p:panelGrid styleClass="noBorderPanelGrid" style="padding: 4px;">
+						<p:row>
+							<p:column>
+								<p:selectOneMenu value="#{mainCategoryBean.selectedCategoryType}" id="type" converter="#{mainCategoryTypeConverter}" 
+									var="type" onchange="selectCategoryType()">
+									<f:selectItems value="#{mainCategoryBean.categoryTypes}" var="item" itemLabel="#{item.name}" itemValue="#{item}"/>
+									<p:column>
+						                <h:outputText value="#{type.name}" />
+						            </p:column>
+								</p:selectOneMenu>
+								<h:graphicImage url="/images/icon/error.png" style="margin-left:5px;" id="errorNotice" 
+									rendered="#{(!mainCategoryBean.existingMainCategory) and (mainCategoryBean.categoryTypes.size() gt 0)}">
+									<p:tooltip for="errorNotice" showEffect="clip" hideEffect="clip">
+									    <h:outputText value="The main categories of the selected organization are not existing." />
+									    <br/>
+									    <h:outputText value="You can load the default main categories by clicking on 'Load Default' button or create them manually."/>		
+									</p:tooltip>
+								</h:graphicImage>
+								
+							</p:column>
+							<p:column rendered="#{(mainCategoryBean.categoryTypes.size() gt 0)}">
+								<p:commandButton value="Load" icon="ui-icon-search" actionListener="#{mainCategoryBean.doLoadCategoryTree}" style="margin-right:5px;"
+									rendered="#{mainCategoryBean.existingMainCategory}" update="@([id$=mainCategoryTreeForm]) @([id$=mainCategoryDetailPanel]) @form" >
+								</p:commandButton>
+								
+								<p:commandButton value="Load Default" icon="ui-icon-search" actionListener="#{mainCategoryBean.doLoadDefaultCategoryTree}" style="margin-right:5px;"
+									rendered="${(!mainCategoryBean.existingMainCategory)}" update="@([id$=mainCategoryTreeForm]) @([id$=mainCategoryDetailPanel]) @form" >
+								</p:commandButton>
+								
+								<p:commandButton value="Add Category" icon="ui-icon-plusthick" actionListener="#{mainCategoryBean.doAddCategory}" 
+									rendered="${(!mainCategoryBean.existingMainCategory) and (empty mainCategoryBean.root)}" update="@([id$=mainCategoryTreeForm]) @([id$=mainCategoryDetailPanel]) @form" style="margin-right:5px;">
+								</p:commandButton>
+								
+								<p:commandButton value="Save All" icon="ui-icon-disk" actionListener="#{mainCategoryBean.doSaveAllTemporaryCategories}"
+									rendered="${(!mainCategoryBean.existingMainCategory) and (mainCategoryBean.temporaryTreeNode)}" update="@([id$=mainCategoryTreeForm]) @([id$=mainCategoryDetailPanel]) @form">
+								</p:commandButton>
+							</p:column>
+						</p:row>
+					</p:panelGrid>
+				</h:form>
+			</pe:layoutPane>
+			
+			<pe:layoutPane position="west" size="380" resizable="true" minSize="355">
+				<h:panelGroup layout="block" id="westPanel">
+					<ui:include src="mainCategoryTree.xhtml"/>
+				</h:panelGroup>
+			</pe:layoutPane>
+			
+			<pe:layoutPane position="center" size="50%" styleContent="overflow: hidden">	
+				<h:panelGroup layout="block" id="centerPanel">
+					<ui:include src="mainCategoryDetail.xhtml"/>	
+					<ui:include src="mainCategoryTypeList.xhtml"/>
+				</h:panelGroup>		
+			</pe:layoutPane>
+			
+			<pe:layoutPane position="south" size="50%" initClosed="true" >
+				<h:panelGroup layout="block" id="southPanel">
+					<ui:include src="mainCategoryTypeDetail.xhtml"/>
+				</h:panelGroup>
+			</pe:layoutPane>
+		</pe:layoutPane>
+	</ui:define>
+</ui:composition>
+</html>

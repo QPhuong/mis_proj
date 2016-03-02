@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      >
+<h:head>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>
+    	<ui:insert name="title">ISO 27001:2013 Evidence Management Home</ui:insert>
+    </title>
+    <link rel="stylesheet" href="#{request.contextPath}/css/style.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/css/icon.css"/>
+    <link rel="stylesheet" href="#{request.contextPath}/css/overrideDefault.css"/>
+    <style type="text/css">
+       
+    </style>
+</h:head>
+<h:body>
+	<f:metadata>
+	    <f:event type="preRenderView" listener="#{authenticationBean.relogin}" />
+	</f:metadata>
+	<ui:include src="/templates/header.xhtml" />
+	<h:form style="height:100%;">
+		<p:panel header="Login" styleClass="loginPanel" id="loginPanel">
+			<p:focus context="loginPanel"/>
+			<p:messages id="messages" autoUpdate="true" showDetail="false" />
+			<p:panelGrid styleClass="loginGridPanel" >
+				<p:row>
+					<p:column style="width:100px;"><p:outputLabel for="username" value="Username: " /> </p:column>
+					<p:column>
+						<p:inputText id="username" value="#{authenticationBean.userName}" required="true" 
+		         			requiredMessage="Please input user name!" size="50"/>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column><p:outputLabel for="password" value="Password: " /></p:column>
+					<p:column>
+						<p:password id="password" value="#{authenticationBean.password}" required="true" 
+		         			requiredMessage="Please input password!" size="50"/>
+					</p:column>
+				</p:row> 
+				<p:row rendered="#{applicationSetupBean.multiOrganizationSetup}">
+					<p:column>
+						<p:outputLabel for="org" value="Organization: " />
+					</p:column>
+					<p:column>
+						<p:selectOneMenu value="#{authenticationBean.selectedOrg}" effect="fade" id="org" converter="#{organizationConverter}" var="org">
+							<f:selectItems value="#{authenticationBean.orgLst}" var="item" itemLabel="#{item.name}" itemValue="#{item}"/>
+							<p:column>
+				                <h:outputText value="#{org.name}" />
+				            </p:column>
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column></p:column>
+					<p:column>
+						<p:commandButton id="submitButton" value="Login" action="#{authenticationBean.login}" ajax="false" update="@form"/>
+					</p:column>
+				</p:row>  
+			</p:panelGrid> 
+		</p:panel>
+	</h:form>
+	
+	<p:panel header="Demo user information" rendered="#{applicationSetupBean.demoMode}" styleClass="loginPanel" style="margin-top: 10px;">
+		<p:panelGrid styleClass="noBorderPanelGrid">
+			<p:row>
+				<p:column colspan="5"><h:outputLabel value="System Administrator"/></p:column>
+			</p:row>
+			<p:row>
+				<p:column style="width: 50px;"></p:column>
+				<p:column><h:outputLabel value="User: "/></p:column>
+				<p:column><h:outputLabel value="sys_admin"/></p:column>
+				<p:column><h:outputLabel value="Pass: "/></p:column>
+				<p:column><h:outputLabel value="P@ssw0rd"/></p:column>
+			</p:row>			
+			<p:row>
+				<p:column colspan="5"><h:outputLabel value="Organization Administrator"/></p:column>
+			</p:row>
+			<p:row>
+				<p:column></p:column>
+				<p:column><h:outputLabel value="User: "/></p:column>
+				<p:column><h:outputLabel value="admin"/></p:column>
+				<p:column><h:outputLabel value="Pass: "/></p:column>
+				<p:column><h:outputLabel value="P@ssw0rd"/></p:column>
+			</p:row>	
+			<p:row>
+				<p:column colspan="5"><h:outputLabel value="General user"/></p:column>
+			</p:row>
+			<p:row>
+				<p:column></p:column>
+				<p:column><h:outputLabel value="User: "/></p:column>
+				<p:column><h:outputLabel value="user0"/></p:column>
+				<p:column><h:outputLabel value="Pass: "/></p:column>
+				<p:column><h:outputLabel value="P@ssw0rd"/></p:column>
+			</p:row>
+			<p:row>
+				<p:column></p:column>
+				<p:column><h:outputLabel value="User: "/></p:column>
+				<p:column><h:outputLabel value="user1"/></p:column>
+				<p:column><h:outputLabel value="Pass: "/></p:column>
+				<p:column><h:outputLabel value="P@ssw0rd"/></p:column>
+			</p:row>
+			<p:row>
+				<p:column></p:column>
+				<p:column><h:outputLabel value="User: "/></p:column>
+				<p:column><h:outputLabel value="user2"/></p:column>
+				<p:column><h:outputLabel value="Pass: "/></p:column>
+				<p:column><h:outputLabel value="P@ssw0rd"/></p:column>
+			</p:row>
+			<p:row>
+				<p:column></p:column>
+				<p:column><h:outputLabel value="User: "/></p:column>
+				<p:column><h:outputLabel value="user3"/></p:column>
+				<p:column><h:outputLabel value="Pass: "/></p:column>
+				<p:column><h:outputLabel value="P@ssw0rd"/></p:column>
+			</p:row>
+			<p:row>
+				<p:column></p:column>
+				<p:column><h:outputLabel value="User: "/></p:column>
+				<p:column><h:outputLabel value="user4"/></p:column>
+				<p:column><h:outputLabel value="Pass: "/></p:column>
+				<p:column><h:outputLabel value="P@ssw0rd"/></p:column>
+			</p:row>
+		</p:panelGrid>
+	</p:panel>
+</h:body>
+
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/templates/layoutAdministrator.xhtml">
+<ui:define name="adminCenter">
+	<h:form>
+		<style>
+			.userRoleMenuSecLst .ui-selectlistbox-item {
+				height: 25px;
+			}
+			.userRoleMenuSecLst {
+				width: 100%;
+			}
+		</style>
+		
+		<p:remoteCommand name="changeSelectedOrganization" actionListener="#{menuSecurityBean.doLoadUserRoleByOrganization}" 
+					update="@form" />
+		
+		<p:panelGrid rendered="#{menuSecurityBean.multiOrganization}" columns="3" styleClass="noBorderPanelGrid">
+			<p:outputLabel value="Organization: "/>
+			<p:selectOneMenu value="#{menuSecurityBean.selectedOrganization}" effect="fade" id="org" converter="#{organizationConverter}" var="org"
+					onchange="changeSelectedOrganization()">
+				<f:selectItems value="#{menuSecurityBean.organizationLst}" var="item" itemLabel="#{item.name}" itemValue="#{item}"/>
+				<p:column>
+	                <h:outputText value="#{org.name}" />
+	            </p:column>
+			</p:selectOneMenu>			
+			<p:commandButton value="Load User Role" actionListener="#{menuSecurityBean.doLoadUserRoleByOrganization}" ajax="true" 
+				update="@form" icon="ui-icon-search"/>			
+		</p:panelGrid>
+		<p:separator rendered="#{menuSecurityBean.multiOrganization}" />
+		
+		
+		<p:remoteCommand name="selectUserRole" actionListener="#{menuSecurityBean.doSelectUserRole}" update="menuTree" process="@form"/>
+		<p:panelGrid styleClass="noBorderPanelGrid" style="width:100%">
+			<p:row>
+				<p:column>
+					<p:outputLabel for="userRoleSelect" value="User Role: "/>
+				</p:column>
+				<p:column>
+					<p:outputLabel for="menuTree" value="Menu: "/>
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column style="vertical-align:top">
+					<p:selectOneListbox styleClass="userRoleMenuSecLst" value="#{menuSecurityBean.selectedUserRole}" converter="#{roleConverter}" 
+						var="t" filter="true" filterMatchMode="contains" onchange="selectUserRole();" id="userRoleSelect">
+						<f:selectItems value="#{menuSecurityBean.lstUserRole}" var="role" itemLabel="#{role.name}" itemValue="#{role}" />
+						<p:column>
+			                <h:outputText value="#{t.name}"/>
+			            </p:column>
+					</p:selectOneListbox>
+				</p:column>
+				<p:column style="border-style: solid;">
+					<p:tree value="#{menuSecurityBean.root}" var="node" id="menuTree" selectionMode="checkbox" styleClass="noBorderTreeNode"
+						dynamic="true" selection="#{menuSecurityBean.selectedNode}" >
+				        <p:treeNode >
+				            <h:outputText value="#{node.name}" />
+				        </p:treeNode>
+				    </p:tree>
+				</p:column>
+			</p:row>
+		</p:panelGrid>
+		<p:separator style="width:70%"/>
+		<h:panelGroup layout="block" style="width:200px; margin-left:auto; margin-right:auto; margin-top:10px;">
+			<p:commandButton value="Save All" icon="ui-icon-disk" actionListener="#{menuSecurityBean.doSaveAll}" update="@form"/>
+			<p:commandButton value="Reset All" icon="ui-icon-refresh" actionListener="#{menuSecurityBean.doResetAll}" update="@form"/>
+		</h:panelGroup>
+	</h:form>
+</ui:define>
+</ui:composition> 
+</html>

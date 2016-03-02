@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+
+<ui:composition template="/templates/layoutAdministrator.xhtml">
+	<ui:define name="adminCenter">
+		<h:form id="logMainForm">
+			<p:panelGrid styleClass="noBorderPanelGrid">
+				<p:row>
+					<p:column>
+						<p:outputLabel value="Log Type"></p:outputLabel>
+					</p:column>
+					<p:column colspan="3">
+						<p:selectOneMenu value="#{userActivityBean.criteria.logType}" effect="fade" id="logTypes">
+							<f:selectItem itemLabel="Select One" itemValue="" />
+							<f:selectItems value="#{userActivityBean.logTypes}"></f:selectItems>
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<p:outputLabel value="Date from"></p:outputLabel>
+					</p:column>
+					<p:column>
+						<p:calendar value="#{userActivityBean.criteria.from}" showOn="button" pattern="MM/dd/yyyy" />
+					</p:column>
+					<p:column>
+						<p:outputLabel value="to"></p:outputLabel>
+					</p:column>
+					<p:column>
+						<p:calendar value="#{userActivityBean.criteria.to}" showOn="button" pattern="MM/dd/yyyy"></p:calendar>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<p:outputLabel value="User"></p:outputLabel>
+					</p:column>
+					<p:column colspan="3">
+						<p:autoComplete value="#{userActivityBean.criteria.user}" completeMethod="#{userActivityBean.doSearchUser}" size="50" dropdown="true"
+							var="user" itemLabel="#{user.searchDisplayedName}" itemValue="#{user}" converter="#{userConverter}" forceSelection="false">
+						</p:autoComplete>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<p:outputLabel value="Limit results"></p:outputLabel>
+					</p:column>
+					<p:column colspan="3">
+						<p:selectOneMenu value="#{userActivityBean.criteria.limit}" effect="fade" id="limit">
+							<f:selectItem itemLabel="50 records" itemValue="50" />
+							<f:selectItem itemLabel="100 records" itemValue="100" />
+							<f:selectItem itemLabel="200 records" itemValue="200" />
+							<f:selectItem itemLabel="500 records" itemValue="500" />
+							<f:selectItem itemLabel="1000 records" itemValue="1000" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column></p:column>
+					<p:column colspan="3">
+						<p:commandButton value="Search" icon="ui-icon-search" style="margin-right: 5px;"
+							actionListener="#{userActivityBean.doSearch}" update="@form"/>
+						<p:commandButton value="Reset" icon="ui-icon-refresh" style="margin-right: 5px;"
+							actionListener="#{userActivityBean.doReset}" update="@form"/>
+						<p:commandButton value="Export" icon="ui-icon-excel" style="margin-right: 5px;" ajax="false">
+        					<pe:exporter type="xlsx" target="activityTable" fileName="Logs"/>
+						</p:commandButton>
+						<p:commandButton value="Export" icon="ui-icon-pdf" style="margin-right: 5px;" ajax="false">
+        					<pe:exporter type="pdf" target="activityTable" fileName="Logs"/>
+						</p:commandButton>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			<br />
+			<p:dataTable value="#{userActivityBean.activities}" var="activity" resizableColumns="true" id="activityTable"
+				paginator="true" rows="10" paginatorPosition="bottom"  >
+				
+				<p:column style="width:110px;text-align: center; vertical-align: middle;">
+					<f:facet name="header">
+						<h:outputText value="Date"/>   
+					</f:facet>
+					<h:outputText value="#{activity.activityDate}" style="vertical-align: middle;">
+						<f:convertDateTime pattern="dd-MMM-yyyy HH:mm:ss" />
+					</h:outputText>
+				</p:column>
+				<p:column style="vertical-align: middle;">
+					<f:facet name="header">
+						<h:outputText value="Activity"/>   
+					</f:facet>
+				 	<h:outputText value="#{activity.activiy}"></h:outputText>
+				</p:column>
+				<p:column style="vertical-align: middle;">
+					<f:facet name="header">
+						<h:outputText value="Comment"/>   
+					</f:facet>
+				 	<h:outputText value="#{activity.comment}"></h:outputText>
+				</p:column>
+				<p:column style="width:60px;text-align: center; vertical-align: middle;">
+					<f:facet name="header">
+						<h:outputText value="Version"/>   
+					</f:facet>
+				 	<h:outputText value="#{activity.version}"></h:outputText>
+				</p:column>
+				<p:column style="width:60px;text-align: center; vertical-align: middle;">
+					<f:facet name="header">
+						<h:outputText value="User"/>   
+					</f:facet>
+				 	<h:outputText value="#{activity.user.username}" title="#{activity.user.fullname}"></h:outputText>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>      
